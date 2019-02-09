@@ -3,7 +3,7 @@
 namespace Netmosfera\Opal\InternalTools\File;
 
 use Closure;
-use Error;
+use Exception;
 
 /**
  * @TODOC
@@ -29,11 +29,11 @@ function retryWithinTimeLimit(
     Float $secondsDelayBetweenTries = 0.1
 ): Bool{
     if($secondsLimit < 0.0){
-        throw new Error("Limit must be non negative");
+        throw new Exception("Limit must be non negative");
     }
 
     if($secondsDelayBetweenTries < 0.0){
-        throw new Error("Delay must be non negative");
+        throw new Exception("Delay must be non negative");
     }
 
     $startTime = microtime(TRUE);

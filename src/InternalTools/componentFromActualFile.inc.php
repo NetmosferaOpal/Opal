@@ -2,7 +2,7 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
-use Error;
+use Exception;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
 use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
@@ -35,7 +35,7 @@ function componentFromActualFile(
         substr($file, 0, $directory->pathLength) !== $directory->path ||
         ($file[$directory->pathLength] !== "/" && $file[$directory->pathLength] !== "\\")
     ){
-        throw new Error("The file is not located in the provided directory");
+        throw new Exception("The file is not located in the provided directory");
     }
 
     $relativeFile = substr($file, $directory->pathLength);

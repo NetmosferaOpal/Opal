@@ -2,7 +2,7 @@
 
 namespace Netmosfera\OpalTests\InternalTools;
 
-use Error;
+use Exception;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
@@ -13,25 +13,23 @@ class componentFromActualFileTest extends TestCase
 {
     function data1(){
         // different prefix
-        yield ["a", "b/file.php"];
-        yield ["a", "b\file.php"];
+        yield ["/a", "/b/file.php"];
+        yield ["/a", "/A/file.php"];
+        yield ["/a/b/c", "/a/b/b/file.php"];
         yield ["/a/b/c", "/a/b/C/file.php"];
 
         // prefix is the same but it's not followed by a directory separator
+        yield ["/Fi", "/File.php"];
         yield ["c:\\Path\\Dire", "c:\\Path\\Directory.php"];
-        yield ["//", "File.php"];
-        yield ["\\", "File.php"];
-        yield ["", "File.php"];
 
         // prefix is the same but the directory separator is different
-        yield ["c://Path//To", "c:\\Path\\To//File.php"];
-        yield ["//Path//To", "\\Path\\To//File.php"];
+        yield ["c:/Path/To", "c:/Path\\To/File.php"];
     }
 
     /** @dataProvider data1 */
     public function test1(String $directory, String $file){
         // test error if file does not belong to the provided directory
-        $this->expectException(Error::CLASS);
+        $this->expectException(Exception::CLASS);
         $package = new Package("StarkIndustries", "IronManSuit");
         $directory = new PackageDirectory($package, $directory);
         componentFromActualFile($directory, $file);
@@ -63,10 +61,11 @@ class componentFromActualFileTest extends TestCase
             return new PackageComponent($package, $identifiers, $extension);
         };
 
+        $prefix = "c:\\àèò";
         foreach(["", ".php", ".inc.php"] as $ext){
-            yield ["c:\\àèò\\", "c:\\àèò\\abc" . $ext,  $m(["abc"], $ext)];
-            yield ["c:\\àèò\\", "c:\\àèò\\abc\\foo" . $ext,  $m(["abc", "foo"], $ext)];
-            yield ["c:\\àèò\\", "c:\\àèò//abc//foo" . $ext,  $m(["abc", "foo"], $ext)];
+            yield [$prefix, $prefix . "\\abc" . $ext,  $m(["abc"], $ext)];
+            yield [$prefix, $prefix . "\\abc\\foo" . $ext,  $m(["abc", "foo"], $ext)];
+            yield [$prefix, $prefix . "//abc//foo" . $ext,  $m(["abc", "foo"], $ext)];
         }
     }
 
