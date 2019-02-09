@@ -1,0 +1,34 @@
+{
+    "homepage": "https://github.com/Netmosfera/Opal",
+    "license": "MIT",
+    "authors": [{
+        "name": "Wes",
+        "role": "Smith",
+        "homepage": "https://github.com/Netmosfera"
+    }],
+    "require": {
+        "php": ">=7.2 <8",
+        "nikic/php-parser": ">=4 <5",
+        "netmosfera/php-parser-tools": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=8 <9",
+        "php-tool-bucket/incload": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Netmosfera\\Opal\\": "src/"
+        },
+        "files": [
+            "composer-includes.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Netmosfera\\OpalTests\\": "tests/"
+        },
+        "files": [
+            "composer-includes-dev.php"
+        ]
+    }
+}

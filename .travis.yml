@@ -1,0 +1,45 @@
+sudo: required
+
+language: php
+
+matrix:
+  include:
+    - name: '[UNIT] PHP 7.2'
+      php: '7.2'
+
+    - name: '[UNIT] PHP 7.2 With Lowest Dependencies'
+      php: '7.2'
+      env: dependencies=lowest
+
+    - name: '[UNIT] PHP 7.2 With Highest Dependencies'
+      php: '7.2'
+      env: dependencies=highest
+
+    - name: '[UNIT] PHP 7.3'
+      php: '7.3'
+
+    - name: '[UNIT] PHP 7.3 With Lowest Dependencies'
+      php: '7.3'
+      env: dependencies=lowest
+
+    - name: '[UNIT] PHP 7.3 With Highest Dependencies'
+      php: '7.3'
+      env: dependencies=highest
+
+install:
+- wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.0.0/php-coveralls.phar
+- chmod 777 php-coveralls.phar
+- mkdir -p build/logs
+- chmod 777 build/logs
+
+before_script:
+  - travis_retry composer self-update
+  - if [ -z "$dependencies" ];          then travis_retry composer install; fi;
+  - if [ "$dependencies" = "lowest" ];  then travis_retry composer update --prefer-lowest -n; fi;
+  - if [ "$dependencies" = "highest" ]; then travis_retry composer update -n; fi;
+
+script:
+  - phpdbg -qrr vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry php php-coveralls.phar
