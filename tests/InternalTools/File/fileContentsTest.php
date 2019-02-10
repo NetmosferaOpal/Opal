@@ -21,6 +21,10 @@ class fileContentsTest extends TestCase
             $write = `php fileContentsWriteFileConcurrently.php $fileName`;
         });
 
+        echo "\n\n\n";
+        echo $write;
+        echo "\n\n\n";
+
         self::assertSame("foo", $result);
     }
 }
