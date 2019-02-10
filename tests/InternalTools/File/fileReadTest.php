@@ -4,17 +4,17 @@ namespace Netmosfera\OpalTests\InternalTools\File;
 
 use PHPUnit\Framework\TestCase;
 use const PHP_INT_MAX;
-use function Netmosfera\Opal\InternalTools\File\fileContents;
+use function Netmosfera\Opal\InternalTools\File\fileRead;
 use function random_int;
 
-class fileContentsTest extends TestCase
+class fileReadTest extends TestCase
 {
     public function test_can_read_while_shared_locked(){
         $file = random_int(0, PHP_INT_MAX) . ".txt";
         $path = __DIR__ . "/" . $file;
         file_put_contents($path, "42");
-        $result = fileContents($path, 5.0, 0.5, function() use(&$file, &$otherResult){
-            $path = __DIR__  . "/fileContents_readFileConcurrently.php";
+        $result = fileRead($path, 5.0, 0.5, function() use(&$file, &$otherResult){
+            $path = __DIR__  . "/fileRead_readFileConcurrently.php";
             $otherResult = shell_exec('php "' . $path . '" ' . $file);
         });
         unlink($path);
@@ -26,8 +26,8 @@ class fileContentsTest extends TestCase
         $file = random_int(0, PHP_INT_MAX) . ".txt";
         $path = __DIR__ . "/" . $file;
         file_put_contents($path, "42");
-        $result = fileContents($path, 5.0, 0.5, function() use(&$file, &$otherResult){
-            $path = __DIR__  . "/fileContents_writeFileConcurrently.php";
+        $result = fileRead($path, 5.0, 0.5, function() use(&$file, &$otherResult){
+            $path = __DIR__  . "/fileRead_writeFileConcurrently.php";
             $otherResult = shell_exec('php "' . $path . '" ' . $file);
         });
         unlink($path);

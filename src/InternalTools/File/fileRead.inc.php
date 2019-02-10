@@ -17,30 +17,29 @@ use function fread;
  *
  * @param           Float $secondsDelayBetweenTries
  *
- * @param           Closure|NULL $doStuffWhileLocked
- * Execute code while the lock is active; used for testing.
+ * @param           Closure|NULL $alsoDoWhileLocked
  *
  * @returns         String|NULL
  */
-function fileContents(
+function fileRead(
     String $path,
     Float $secondsLimit,
     Float $secondsDelayBetweenTries,
-    ?Closure $doStuffWhileLocked = NULL
+    ?Closure $alsoDoWhileLocked = NULL
 ): ?String{
     assert(isAbsolutePath($path));
 
     $contents = NULL;
 
-    retryWithinTimeLimit(function() use(&$path, &$contents, &$doStuffWhileLocked){
+    retryWithinTimeLimit(function() use(&$path, &$contents, &$alsoDoWhileLocked){
         $file = @fopen($path, "r");
         if($file === FALSE){ return FALSE; }
         $lockAcquired = @flock($file, LOCK_SH | LOCK_NB);
         if($lockAcquired === FALSE){ return FALSE; }
         clearstatcache(FALSE, $path);
         $fileSize = filesize($path);
-        if($doStuffWhileLocked !== NULL){ $doStuffWhileLocked(); }
         $contents = @fread($file, $fileSize);
+        if($alsoDoWhileLocked !== NULL){ $alsoDoWhileLocked($contents); }
         @flock($file, LOCK_UN);
         @fclose($file);
         return TRUE;
