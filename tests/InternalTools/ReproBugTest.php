@@ -17,7 +17,7 @@ class ReproBugTest extends TestCase
         // (2)
         // attempt to write that file concurrently while the lock is active
         echo "bytes written: ";
-        echo `php -r "var_dump(file_put_contents('$path', 'baz'));"` . "\n";
+        echo `exec php -r "var_dump(file_put_contents('$path', 'baz'));"` . "\n";
         // this step fails as expected -- means the file is still "123456"
 
         // (3)
