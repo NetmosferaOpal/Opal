@@ -12,16 +12,16 @@ use function fread;
  *
  * @param           String $path
  *
- * @param           Float $maxTimeInSeconds
+ * @param           Float $secondsLimit
  *
- * @param           Float $retryDelayInSeconds
+ * @param           Float $secondsDelayBetweenTries
  *
  * @returns         String|NULL
  */
 function fileContents(
     String $path,
-    Float $maxTimeInSeconds,
-    Float $retryDelayInSeconds
+    Float $secondsLimit,
+    Float $secondsDelayBetweenTries
 ): ?String{
     assert(isAbsolutePath($path));
 
@@ -37,7 +37,7 @@ function fileContents(
         @flock($file, LOCK_UN);
         @fclose($file);
         return TRUE;
-    }, $maxTimeInSeconds, $retryDelayInSeconds);
+    }, $secondsLimit, $secondsDelayBetweenTries);
 
     return $contents;
 }
