@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+echo "WTF";
+
 (function($fileName) use(&$argv){
     var_dump($file = fopen(__DIR__ . "/" . $fileName, "c"));
     var_dump(flock($file, LOCK_EX | LOCK_NB));
