@@ -23,12 +23,15 @@ class fileContentsTest extends TestCase
 
         });
 
-        shell_exec("php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName");
+        var_dump(ini_get("disable_functions"));
+        var_dump(ini_get("safe_mode"));
+        var_dump(ini_get("safe_mode_exec_dir"));
 
-
-        $resultInner = file_get_contents(__DIR__ . "/" . $fileName . ".result.txt");
+        $shell_result = shell_exec(
+            "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
+        );
         echo "\n\n\n";
-        echo $resultInner;
+        var_dump($result);
         echo "\n\n\n";
 
         self::assertSame("foo", $result);
