@@ -3,6 +3,7 @@
 namespace Netmosfera\OpalTests\InternalTools\File;
 
 use function exec;
+use function file_get_contents;
 use function Netmosfera\Opal\InternalTools\File\fileContents;
 use const PHP_INT_MAX;
 use PHPUnit\Framework\TestCase;
@@ -14,9 +15,12 @@ class fileContentsTest extends TestCase
         $fileName = random_int(0, PHP_INT_MAX) . ".txt";
         $filePath = __DIR__ . "/" . $fileName;
         file_put_contents($filePath, "foo");
-        fileContents($filePath, 5.0, 0.5, function() use(&$fileName){
-            $result = `start php fileContentsWriteFileConcurrently.php $fileName`;
-            echo $result;
+        self::assertSame("foo", file_get_contents($filePath));
+
+        $result = fileContents($filePath, 5.0, 0.5, function() use(&$fileName, &$write){
+            $write = `php fileContentsWriteFileConcurrently.php $fileName`;
         });
+
+        self::assertSame("foo", $result);
     }
 }
