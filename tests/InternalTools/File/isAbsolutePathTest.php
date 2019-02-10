@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1); // atom
+<?php declare(strict_types = 1);
 
 namespace Netmosfera\OpalTests\InternalTools\File;
 
