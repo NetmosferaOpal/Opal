@@ -21,7 +21,7 @@ class fileContentsTest extends TestCase
             &$fileName, &$shell_result
         ){
             $shell_result = shell_exec(
-                "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
+                "php fileContentsWriteFileConcurrently.php $fileName"
             );
         });
         unlink($filePath);
