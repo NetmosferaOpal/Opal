@@ -40,17 +40,11 @@ function retryWithinTimeLimit(
 
     while(TRUE){
         $operationSucceeded = $function();
-
         if($operationSucceeded){ return TRUE; }
-
         $elapsedTimeSoFar = microtime(TRUE) - $startTime;
-
         $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsDelayBetweenTries;
-
         $willExceedTimeLimit = $nextElapsedTimePrediction > $secondsLimit;
-
         if($willExceedTimeLimit){ return FALSE; }
-
         usleep((Int)($secondsDelayBetweenTries * 1000000));
     }
 }

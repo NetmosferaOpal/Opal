@@ -18,18 +18,20 @@ class fileContentsTest extends TestCase
         self::assertSame("foo", file_get_contents($filePath));
 
         $result = fileContents($filePath, 5.0, 0.5, function() use(
-            &$fileName, &$out, &$return1, &$return2
+            &$fileName, &$shell_result
         ){
-
+            $shell_result = shell_exec(
+                "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
+            );
         });
 
-        $shell_result = shell_exec(
-            "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
-        );
         echo "\n\n\n";
         var_dump($shell_result);
         echo "\n\n\n";
+        unlink($filePath);
 
         self::assertSame("foo", $result);
+
+
     }
 }

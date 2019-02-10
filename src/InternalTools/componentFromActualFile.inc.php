@@ -29,6 +29,7 @@ function componentFromActualFile(
     PackageDirectory $directory,
     String $file
 ): ?PackageComponent{
+
     assert(isAbsolutePath($file));
 
     if(

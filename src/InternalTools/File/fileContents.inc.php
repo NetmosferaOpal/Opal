@@ -2,6 +2,7 @@
 
 namespace Netmosfera\Opal\InternalTools\File;
 
+use Closure;
 use const LOCK_SH;
 use function clearstatcache;
 use function filesize;
@@ -16,24 +17,30 @@ use function fread;
  *
  * @param           Float $secondsDelayBetweenTries
  *
+ * @param           Closure|NULL $doStuffWhileLocked
+ * Execute code while the lock is active; used for testing.
+ *
  * @returns         String|NULL
  */
 function fileContents(
     String $path,
     Float $secondsLimit,
-    Float $secondsDelayBetweenTries
+    Float $secondsDelayBetweenTries,
+    ?Closure $doStuffWhileLocked = NULL
 ): ?String{
     assert(isAbsolutePath($path));
 
     $contents = NULL;
 
-    retryWithinTimeLimit(function() use($path, &$contents){
+    retryWithinTimeLimit(function() use(&$path, &$contents, &$doStuffWhileLocked){
         $file = @fopen($path, "r");
         if($file === FALSE){ return FALSE; }
         $lockAcquired = @flock($file, LOCK_SH | LOCK_NB);
         if($lockAcquired === FALSE){ return FALSE; }
         clearstatcache(FALSE, $path);
-        $contents = @fread($file, filesize($path));
+        $fileSize = filesize($path);
+        if($doStuffWhileLocked !== NULL){ $doStuffWhileLocked(); }
+        $contents = @fread($file, $fileSize);
         @flock($file, LOCK_UN);
         @fclose($file);
         return TRUE;
