@@ -11,7 +11,7 @@ use Exception;
  * @param           Closure $function
  *
  * @param           Float $secondsLimit
- * Limit the execution time in seconds.
+ * Limits the execution time in seconds.
  *
  * @param           Float $secondsDelayBetweenTries
  * Pause between each `$function` execution attempt. If set to `0` `$function` will be
@@ -39,18 +39,18 @@ function retryWithinTimeLimit(
     $startTime = microtime(TRUE);
 
     while(TRUE){
-        $callSucceeded = $function();
+        $operationSucceeded = $function();
 
-        if($callSucceeded){
-            return TRUE;
-        }else{
-            $elapsedTime = microtime(TRUE) - $startTime;
-            $nextAttemptInSecondsRelativeToStartTime = $elapsedTime + $secondsDelayBetweenTries;
-            if($nextAttemptInSecondsRelativeToStartTime > $secondsLimit){
-                return FALSE;
-            }else{
-                usleep((Int)($secondsDelayBetweenTries * 1000000));
-            }
-        }
+        if($operationSucceeded){ return TRUE; }
+
+        $elapsedTimeSoFar = microtime(TRUE) - $startTime;
+
+        $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsDelayBetweenTries;
+
+        $willExceedTimeLimit = $nextElapsedTimePrediction > $secondsLimit;
+
+        if($willExceedTimeLimit){ return FALSE; }
+
+        usleep((Int)($secondsDelayBetweenTries * 1000000));
     }
 }
