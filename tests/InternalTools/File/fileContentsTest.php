@@ -21,16 +21,12 @@ class fileContentsTest extends TestCase
             &$fileName, &$out, &$return1, &$return2
         ){
             $return1 = shell_exec(
-                "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName",
-                $out,
-                $return2
+                "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
             );
         });
 
         echo "\n\n\n";
-        var_dump($out);
         var_dump($return1);
-        var_dump($return2);
         echo "\n\n\n";
 
         self::assertSame("foo", $result);
