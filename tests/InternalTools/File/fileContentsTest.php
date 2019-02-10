@@ -17,12 +17,15 @@ class fileContentsTest extends TestCase
         file_put_contents($filePath, "foo");
         self::assertSame("foo", file_get_contents($filePath));
 
-        $result = fileContents($filePath, 5.0, 0.5, function() use(&$fileName, &$write){
-            $write = `php fileContentsWriteFileConcurrently.php $fileName`;
+        $result = fileContents($filePath, 5.0, 0.5, function() use(
+            &$fileName, &$out, &$return
+        ){
+            exec("php fileContentsWriteFileConcurrently.php $fileName`", $out, $return);
         });
 
         echo "\n\n\n";
-        echo $write;
+        var_dump($out);
+        var_dump($return);
         echo "\n\n\n";
 
         self::assertSame("foo", $result);
