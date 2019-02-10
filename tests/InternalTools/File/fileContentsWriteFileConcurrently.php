@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+ini_set("xdebug.overload_var_dump", "0");
+
 (function($fileName){
     var_dump($file = fopen(__DIR__ . "/" . $fileName, "c"));
     var_dump(flock($file, LOCK_EX | LOCK_NB));

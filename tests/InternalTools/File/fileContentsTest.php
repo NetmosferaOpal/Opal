@@ -23,11 +23,6 @@ class fileContentsTest extends TestCase
 
         });
 
-        ini_set("xdebug.overload_var_dump", "0");
-        var_dump(ini_get("disable_functions"));
-        var_dump(ini_get("safe_mode"));
-        var_dump(ini_get("safe_mode_exec_dir"));
-
         $shell_result = shell_exec(
             "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
         );
