@@ -49,7 +49,9 @@ function requireNewPHPFile(
         fwrite($file, $phpSource);
         fflush($file);
         if($requireIt){
-            (function($__file__){ require $__file__; })($path);
+            (function($__OPAL_FILE__){
+                require $__OPAL_FILE__;
+            })($path);
         }
         flock($file, LOCK_UN);
         fclose($file);

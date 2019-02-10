@@ -53,7 +53,7 @@ function loader(){
 
     $importFile = function(String $__OPAL_FILE__){
         assert(isAbsolutePath($__OPAL_FILE__));
-        require $__OPAL_FILE__; // only variable visible into the required file
+        require $__OPAL_FILE__;
     };
 
     $writeAndImportNewFile = function($file, $dirMode, $fileMode, $source, $doImportIt){
