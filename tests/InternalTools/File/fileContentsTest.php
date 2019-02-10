@@ -20,8 +20,8 @@ class fileContentsTest extends TestCase
         $result = fileContents($filePath, 5.0, 0.5, function() use(
             &$fileName, &$out, &$return1, &$return2
         ){
-            $return1 = exec(
-                "php -r \"echo 123;\"",
+            $return1 = shell_exec(
+                "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName",
                 $out,
                 $return2
             );
