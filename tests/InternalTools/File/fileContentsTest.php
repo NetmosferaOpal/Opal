@@ -21,7 +21,9 @@ class fileContentsTest extends TestCase
             &$fileName, &$out, &$return1, &$return2
         ){
             $return1 = exec(
-                "php fileContentsWriteFileConcurrently.php $fileName", $out, $return2
+                "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName",
+                $out,
+                $return2
             );
         });
 
