@@ -31,7 +31,7 @@ class fileContentsTest extends TestCase
             "php \"" . __DIR__ . "/fileContentsWriteFileConcurrently.php\" $fileName"
         );
         echo "\n\n\n";
-        var_dump($result);
+        var_dump($shell_result);
         echo "\n\n\n";
 
         self::assertSame("foo", $result);
