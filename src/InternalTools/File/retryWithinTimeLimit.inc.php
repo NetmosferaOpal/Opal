@@ -13,7 +13,7 @@ use Exception;
  * @param           Float $secondsLimit
  * Limits the execution time in seconds.
  *
- * @param           Float $secondsDelayBetweenTries
+ * @param           Float $secondsBeforeRetry
  * Pause between each `$function` execution attempt. If set to `0` `$function` will be
  * retried immediately after the previous attempt has failed.
  *
@@ -26,15 +26,10 @@ use Exception;
 function retryWithinTimeLimit(
     Closure $function,
     Float $secondsLimit,
-    Float $secondsDelayBetweenTries = 0.1
+    Float $secondsBeforeRetry = 0.1
 ): Bool{
-    if($secondsLimit < 0.0){
-        throw new Exception("Limit must be non negative");
-    }
-
-    if($secondsDelayBetweenTries < 0.0){
-        throw new Exception("Delay must be non negative");
-    }
+    $secondsLimit = $secondsLimit >= 0.0 ? $secondsLimit : 0.0;
+    $secondsBeforeRetry = $secondsBeforeRetry >= 0.0 ? $secondsBeforeRetry : 0.0;
 
     $startTime = microtime(TRUE);
 
@@ -42,9 +37,9 @@ function retryWithinTimeLimit(
         $operationSucceeded = $function();
         if($operationSucceeded){ return TRUE; }
         $elapsedTimeSoFar = microtime(TRUE) - $startTime;
-        $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsDelayBetweenTries;
+        $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsBeforeRetry;
         $willExceedTimeLimit = $nextElapsedTimePrediction > $secondsLimit;
         if($willExceedTimeLimit){ return FALSE; }
-        usleep((Int)($secondsDelayBetweenTries * 1000000));
+        usleep((Int)($secondsBeforeRetry * 1000000));
     }
 }
