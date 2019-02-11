@@ -40,18 +40,21 @@ function fileRead(
     retryWithinTimeLimit(function() use(
         &$path, &$contents, &$afterOpen, &$afterLock, &$afterRead
     ){
-        $file = @fopen($path, "r");
-        if($afterOpen !== NULL) $afterOpen($file !== FALSE);
-        if($file === FALSE) return FALSE;
-        $lockAcquired = @flock($file, LOCK_SH | LOCK_NB);
+        $handle = @fopen($path, "r");
+        if($afterOpen !== NULL) $afterOpen($handle !== FALSE);
+        if($handle === FALSE) return FALSE;
+
+        $lockAcquired = @flock($handle, LOCK_SH | LOCK_NB);
         if($afterLock !== NULL) $afterLock($lockAcquired);
-        if($lockAcquired === FALSE) return FALSE;
+        if($lockAcquired === FALSE){ @fclose($handle); return FALSE; }
+
         clearstatcache(FALSE, $path);
         $fileSize = filesize($path);
-        $contents = fread($file, $fileSize);
+        $contents = $fileSize === 0 ? "" : fread($handle, $fileSize);
         if($afterRead !== NULL) $afterRead($contents);
-        @flock($file, LOCK_UN);
-        @fclose($file);
+
+        @flock($handle, LOCK_UN);
+        @fclose($handle);
         return TRUE;
     }, $secondsLimit, $secondsDelayBetweenTries);
 

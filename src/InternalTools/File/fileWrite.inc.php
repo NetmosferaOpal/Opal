@@ -1,31 +1,23 @@
 <?php declare(strict_types = 1);
 
 namespace Netmosfera\Opal\InternalTools\File;
+use function clearstatcache;
 use Closure;
+use function file_exists;
 
 /**
  * @TODOC
  *
  * @param           String $path
- * `String`
- *
  * @param           String $contents
- * `String`
- *
  * @param           Int $directoryMode
- * `Int`
- *
  * @param           Float $maxTimeInSeconds
- * `Float`
- *
  * @param           Float $retryDelayInSeconds
- * `Float`
- *
- * @param           Closure|NULL $callback
- * `Closure0` Called after the file has been written, but while it is still locked.
- *
+ * @param           Closure|NULL $afterCreateDirectory
+ * @param           Closure|NULL $afterOpen
+ * @param           Closure|NULL $afterLock
+ * @param           Closure|NULL $afterWrite
  * @returns         Bool
- * `Bool`
  */
 function fileWrite(
     String $path,
@@ -33,27 +25,39 @@ function fileWrite(
     Int $directoryMode,
     Float $maxTimeInSeconds,
     Float $retryDelayInSeconds,
-    ?Closure $callback = NULL
+    ?Closure $afterCreateDirectory = NULL,
+    ?Closure $afterOpen = NULL,
+    ?Closure $afterLock = NULL,
+    ?Closure $afterWrite = NULL
 ): Bool{
     assert(isAbsolutePath($path));
     $directory = dirname($path);
     return retryWithinTimeLimit(function() use(
-        &$directory, &$directoryMode, &$path, &$contents, &$callback
+        &$directory, &$directoryMode, &$path, &$contents,
+        &$afterCreateDirectory, &$afterOpen, &$afterLock, &$afterWrite
     ){
         $saveUMask = umask(0);
         @mkdir($directory, $directoryMode, TRUE);
         @umask($saveUMask);
-        $file = @fopen($path, "c");
-        if($file === FALSE) return FALSE;
+        clearstatcache(FALSE, $directory);
+        if($afterCreateDirectory !== NULL) $afterCreateDirectory();
+
+        $handle = @fopen($path, "c");
+        if($afterOpen !== NULL) $afterOpen($handle !== FALSE);
+        if($handle === FALSE) return FALSE;
         // @TODO this should also set the permissions to the file using umask
-        $lockAcquired = flock($file, LOCK_EX | LOCK_NB);
-        if($lockAcquired === FALSE) return FALSE;
-        ftruncate($file, 0);
-        fwrite($file, $contents);
-        fflush($file);
-        if($callback !== NULL) $callback();
-        flock($file, LOCK_UN);
-        fclose($file);
+
+        $lockAcquired = flock($handle, LOCK_EX | LOCK_NB);
+        if($afterLock !== NULL) $afterLock($lockAcquired);
+        if($lockAcquired === FALSE){ fclose($handle); return FALSE; }
+
+        ftruncate($handle, 0);
+        fwrite($handle, $contents);
+        fflush($handle);
+        if($afterWrite !== NULL) $afterWrite();
+
+        flock($handle, LOCK_UN);
+        fclose($handle);
         return TRUE;
     }, $maxTimeInSeconds, $retryDelayInSeconds);
 }
