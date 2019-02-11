@@ -8,8 +8,8 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use function Netmosfera\Opal\InternalTools\File\fileRead;
-use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
 use function Netmosfera\Opal\InternalTools\File\fileWrite;
+use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
 
 function loader(){
     static $instance;
@@ -37,6 +37,7 @@ function loader(){
     $readDirectoryDeep = function(String $directory){
         // directory iterator removes the last "/" and adds its own separator when
         // concatenating the new paths
+        // @TODO must sort alphabetically
         $directory = rtrim($directory, "\\/");
         $flags = RecursiveDirectoryIterator::SKIP_DOTS;
         $directoryIterator = new RecursiveDirectoryIterator($directory, $flags);
