@@ -17,7 +17,11 @@ use function fread;
  *
  * @param           Float $secondsDelayBetweenTries
  *
- * @param           Closure|NULL $alsoDoWhileLocked
+ * @param           Closure|NULL $afterOpen
+ *
+ * @param           Closure|NULL $afterLock
+ *
+ * @param           Closure|NULL $afterRead
  *
  * @returns         String|NULL
  */
@@ -25,21 +29,27 @@ function fileRead(
     String $path,
     Float $secondsLimit,
     Float $secondsDelayBetweenTries,
-    ?Closure $alsoDoWhileLocked = NULL
+    ?Closure $afterOpen = NULL,
+    ?Closure $afterLock = NULL,
+    ?Closure $afterRead = NULL
 ): ?String{
     assert(isAbsolutePath($path));
 
     $contents = NULL;
 
-    retryWithinTimeLimit(function() use(&$path, &$contents, &$alsoDoWhileLocked){
+    retryWithinTimeLimit(function() use(
+        &$path, &$contents, &$afterOpen, &$afterLock, &$afterRead
+    ){
         $file = @fopen($path, "r");
-        if($file === FALSE){ return FALSE; }
+        if($afterOpen !== NULL) $afterOpen($file !== FALSE);
+        if($file === FALSE) return FALSE;
         $lockAcquired = @flock($file, LOCK_SH | LOCK_NB);
-        if($lockAcquired === FALSE){ return FALSE; }
+        if($afterLock !== NULL) $afterLock($lockAcquired);
+        if($lockAcquired === FALSE) return FALSE;
         clearstatcache(FALSE, $path);
         $fileSize = filesize($path);
-        $contents = @fread($file, $fileSize);
-        if($alsoDoWhileLocked !== NULL){ $alsoDoWhileLocked($contents); }
+        $contents = fread($file, $fileSize);
+        if($afterRead !== NULL) $afterRead($contents);
         @flock($file, LOCK_UN);
         @fclose($file);
         return TRUE;
