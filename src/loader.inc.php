@@ -7,9 +7,9 @@ use PhpParser\PrettyPrinter\Standard;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use function Netmosfera\Opal\InternalTools\File\fileContents;
+use function Netmosfera\Opal\InternalTools\File\fileRead;
 use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
-use function Netmosfera\Opal\InternalTools\File\requireNewPHPFile;
+use function Netmosfera\Opal\InternalTools\File\fileWrite;
 
 function loader(){
     static $instance;
@@ -48,7 +48,7 @@ function loader(){
     };
 
     $readFile = function(String $path){
-        return fileContents($path, 5.0, 0.0);
+        return fileRead($path, 5.0, 0.0);
     };
 
     $importFile = function(String $__OPAL_FILE__){
@@ -56,8 +56,14 @@ function loader(){
         require $__OPAL_FILE__;
     };
 
-    $writeAndImportNewFile = function($file, $dirMode, $fileMode, $source, $doImportIt){
-        return requireNewPHPFile($file, $source, $dirMode, 5.0, 0.0, $doImportIt);
+    $writeAndImportNewFile = function(
+        String $file, Int $dirMode, Int $fileMode, String $source, Bool $doImportIt
+    ){
+        $requireFile = $doImportIt ? function(String $__OPAL_FILE__){
+            assert(isAbsolutePath($__OPAL_FILE__));
+            require $__OPAL_FILE__;
+        }: NULL;
+        return fileWrite($file, $source, $dirMode, 5.0, 0.0, $requireFile);
     };
 
     $instance = new Loader(
