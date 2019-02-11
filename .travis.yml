@@ -26,6 +26,17 @@ matrix:
       php: '7.3'
       env: dependencies=highest
 
+    - name: '[UNIT] PHP 7.4'
+      php: '7.4snapshot'
+
+    - name: '[UNIT] PHP 7.4 With Lowest Dependencies'
+      php: '7.4snapshot'
+      env: dependencies=lowest
+
+    - name: '[UNIT] PHP 7.4 With Highest Dependencies'
+      php: '7.4snapshot'
+      env: dependencies=highest
+
 install:
 - wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.0.0/php-coveralls.phar
 - chmod 777 php-coveralls.phar
