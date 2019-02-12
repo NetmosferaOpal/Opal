@@ -3,7 +3,6 @@
 namespace Netmosfera\Opal\InternalTools\File;
 
 use Closure;
-use Exception;
 
 /**
  * @TODOC
@@ -33,13 +32,13 @@ function retryWithinTimeLimit(
 
     $startTime = microtime(TRUE);
 
-    while(TRUE){
-        $operationSucceeded = $function();
-        if($operationSucceeded){ return TRUE; }
+    while($function() === FALSE){
         $elapsedTimeSoFar = microtime(TRUE) - $startTime;
         $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsBeforeRetry;
         $willExceedTimeLimit = $nextElapsedTimePrediction > $secondsLimit;
         if($willExceedTimeLimit){ return FALSE; }
         usleep((Int)($secondsBeforeRetry * 1000000));
     }
+
+    return TRUE;
 }
