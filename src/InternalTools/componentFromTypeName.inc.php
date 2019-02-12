@@ -17,16 +17,9 @@ use Netmosfera\Opal\PackageComponent;
  */
 function componentFromTypeName(String $typeName): ?PackageComponent{
     $identifiers = explode("\\", $typeName);
-
-    if(isset($identifiers[2]) === FALSE){
-        return NULL;
-    }
-
+    if(isset($identifiers[2]) === FALSE) return NULL;
     $vendorIdentifier = array_shift($identifiers);
-
     $packageIdentifier = array_shift($identifiers);
-
     $package = new Package($vendorIdentifier, $packageIdentifier);
-
     return new PackageComponent($package, $identifiers, ".php");
 }
