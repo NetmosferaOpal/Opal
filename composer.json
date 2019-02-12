@@ -1,5 +1,5 @@
 {
-    "name": "opal/opal",
+    "name": "opal/loader",
     "homepage": "https://github.com/PHPOpal/Opal",
     "license": "MIT",
     "authors": [{
