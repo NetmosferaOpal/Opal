@@ -23,7 +23,7 @@ class componentFromActualFileTest extends TestCase
         yield ["c:\\Path\\Dire", "c:\\Path\\Directory.php"];
 
         // prefix is the same but the directory separator is different
-        yield ["c:/Path/To", "c:/Path\\To/File.php"];
+        yield ["c:/Path/To", "c:\\Path\\To/File.php"];
     }
 
     /** @dataProvider data1 */
