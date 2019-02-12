@@ -10,7 +10,7 @@
     "require": {
         "php": ">=7.2 <8",
         "nikic/php-parser": ">=4 <5",
-        "netmosfera/php-parser-tools": ">=4 <5"
+        "netmosfera/php-parser-tools": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": ">=8 <9",
