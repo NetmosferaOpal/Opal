@@ -1,5 +1,6 @@
 {
-    "homepage": "https://github.com/Netmosfera/Opal",
+    "name": "opal/opal",
+    "homepage": "https://github.com/PHPOpal/Opal",
     "license": "MIT",
     "authors": [{
         "name": "Wes",
