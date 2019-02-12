@@ -79,9 +79,7 @@ class Loader
     }
 
     private function _ensureModifiable(){
-        if($this->_modifiable === FALSE){
-            throw new Error("The loader is already running");
-        }
+        if($this->_modifiable === FALSE) throw new Error("The loader is already running");
     }
 
     public function addPackage(
@@ -121,7 +119,7 @@ class Loader
         spl_autoload_register(function(String $typeName){
             $component = componentFromTypeName($typeName);
             $directory = $this->_directories[$component->package->id] ?? NULL;
-            if($directory === NULL){ return NULL; }
+            if($directory === NULL) return NULL;
             $file = $this->_cacheDirectory . $component->absolutePath;
             ($this->_importFile)($file);
         }, TRUE, FALSE);
@@ -155,9 +153,9 @@ class Loader
 
         spl_autoload_register(function(String $typeName){
             $component = componentFromTypeName($typeName);
-            if($component === NULL){ return NULL; }
+            if($component === NULL) return NULL;
             $directory = $this->_directories[$component->package->id] ?? NULL;
-            if($directory === NULL){ return NULL; }
+            if($directory === NULL) return NULL;
             $this->_preprocessComponent($directory, $component, TRUE);
         }, TRUE, FALSE);
 
@@ -234,25 +232,17 @@ class Loader
         Bool $doImportIt
     ){
         assert(isset($this->_directories[$directory->package->id]));
-
         $originFile = $directory->path . $component->relativeToPackagePath;
-
         $source = ($this->_readFile)($originFile);
-
-        if($source === NULL){ throw new Error("Unable to read $originFile"); }
-
+        if($source === NULL) throw new Error("Unable to read $originFile");
         if($this->_preprocessors !== []){
             $nodes = ($this->_sourceToTree)($source);
-
             foreach($this->_preprocessors as $preprocessor){
                 $nodes = $preprocessor($component, $nodes);
             }
-
             $source = ($this->_treeToSource)($nodes);
         }
-
         $destinationFile = $this->_cacheDirectory . $component->absolutePath;
-
         $written = ($this->_writeAndImportNewFile)(
             $destinationFile,
             $this->_cacheDirectoryMode,
@@ -260,7 +250,6 @@ class Loader
             $source,
             $doImportIt
         );
-
-        if($written === FALSE){ throw new Error("Unable to write $destinationFile"); }
+        if($written === FALSE) throw new Error("Unable to write $destinationFile");
     }
 }
