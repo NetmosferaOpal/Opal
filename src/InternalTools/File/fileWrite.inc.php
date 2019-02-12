@@ -1,9 +1,19 @@
 <?php declare(strict_types = 1);
 
 namespace Netmosfera\Opal\InternalTools\File;
-use function clearstatcache;
 use Closure;
-use function file_exists;
+use const LOCK_UN;
+use function assert;
+use function clearstatcache;
+use function dirname;
+use function fclose;
+use function fflush;
+use function flock;
+use function fopen;
+use function ftruncate;
+use function fwrite;
+use function mkdir;
+use function umask;
 
 /**
  * @TODOC
@@ -13,10 +23,10 @@ use function file_exists;
  * @param           Int $directoryMode
  * @param           Float $maxTimeInSeconds
  * @param           Float $retryDelayInSeconds
- * @param           Closure|NULL $afterCreateDirectory
- * @param           Closure|NULL $afterOpen
- * @param           Closure|NULL $afterLock
- * @param           Closure|NULL $afterWrite
+ * @param           Closure|NULL $afterCreateDirectoryAttempt
+ * @param           Closure|NULL $afterOpenAttempt
+ * @param           Closure|NULL $afterLockAttempt
+ * @param           Closure|NULL $afterWriteAttempt
  * @returns         Bool
  */
 function fileWrite(
@@ -25,39 +35,41 @@ function fileWrite(
     Int $directoryMode,
     Float $maxTimeInSeconds,
     Float $retryDelayInSeconds,
-    ?Closure $afterCreateDirectory = NULL,
-    ?Closure $afterOpen = NULL,
-    ?Closure $afterLock = NULL,
-    ?Closure $afterWrite = NULL
+    ?Closure $afterCreateDirectoryAttempt = NULL,
+    ?Closure $afterOpenAttempt = NULL,
+    ?Closure $afterLockAttempt = NULL,
+    ?Closure $afterWriteAttempt = NULL
 ): Bool{
     assert(isAbsolutePath($path));
     $directory = dirname($path);
     return retryWithinTimeLimit(function() use(
-        &$directory, &$directoryMode, &$path, &$contents,
-        &$afterCreateDirectory, &$afterOpen, &$afterLock, &$afterWrite
+        &$directory, &$directoryMode, &$path, &$contents, &$afterCreateDirectoryAttempt,
+        &$afterOpenAttempt, &$afterLockAttempt, &$afterWriteAttempt
     ){
         $saveUMask = umask(0);
         @mkdir($directory, $directoryMode, TRUE);
-        @umask($saveUMask);
+        umask($saveUMask);
         clearstatcache(FALSE, $directory);
-        if($afterCreateDirectory !== NULL) $afterCreateDirectory();
+        if($afterCreateDirectoryAttempt !== NULL) $afterCreateDirectoryAttempt();
 
-        $handle = @fopen($path, "c");
-        if($afterOpen !== NULL) $afterOpen($handle !== FALSE);
-        if($handle === FALSE) return FALSE;
-        // @TODO this should also set the permissions to the file using umask
+        try{
+            $handle = fopen($path, "c");
+            if($afterOpenAttempt !== NULL) $afterOpenAttempt($handle !== FALSE);
+            if($handle === FALSE) return FALSE;
+            // @TODO this should also set the permissions to the file using umask
 
-        $lockAcquired = flock($handle, LOCK_EX | LOCK_NB);
-        if($afterLock !== NULL) $afterLock($lockAcquired);
-        if($lockAcquired === FALSE){ fclose($handle); return FALSE; }
+            $lockAcquired = flock($handle, LOCK_EX | LOCK_NB);
+            if($afterLockAttempt !== NULL) $afterLockAttempt($lockAcquired);
+            if($lockAcquired === FALSE) return FALSE;
 
-        ftruncate($handle, 0);
-        fwrite($handle, $contents);
-        fflush($handle);
-        if($afterWrite !== NULL) $afterWrite();
+            ftruncate($handle, 0);
+            fwrite($handle, $contents);
+            fflush($handle);
+            if($afterWriteAttempt !== NULL) $afterWriteAttempt();
 
-        flock($handle, LOCK_UN);
-        fclose($handle);
-        return TRUE;
+            return TRUE;
+        }finally{
+            if($handle !== FALSE) fclose($handle);
+        }
     }, $maxTimeInSeconds, $retryDelayInSeconds);
 }

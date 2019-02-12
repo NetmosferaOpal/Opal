@@ -17,11 +17,11 @@ use function fread;
  *
  * @param           Float $secondsDelayBetweenTries
  *
- * @param           Closure|NULL $afterOpen
+ * @param           Closure|NULL $afterOpenAttempt
  *
- * @param           Closure|NULL $afterLock
+ * @param           Closure|NULL $afterLockAttempt
  *
- * @param           Closure|NULL $afterRead
+ * @param           Closure|NULL $afterReadAttempt
  *
  * @returns         String|NULL
  */
@@ -29,33 +29,35 @@ function fileRead(
     String $path,
     Float $secondsLimit,
     Float $secondsDelayBetweenTries,
-    ?Closure $afterOpen = NULL,
-    ?Closure $afterLock = NULL,
-    ?Closure $afterRead = NULL
+    ?Closure $afterOpenAttempt = NULL,
+    ?Closure $afterLockAttempt = NULL,
+    ?Closure $afterReadAttempt = NULL
 ): ?String{
     assert(isAbsolutePath($path));
 
     $contents = NULL;
 
     retryWithinTimeLimit(function() use(
-        &$path, &$contents, &$afterOpen, &$afterLock, &$afterRead
+        &$path, &$contents, &$afterOpenAttempt, &$afterLockAttempt, &$afterReadAttempt
     ){
-        $handle = @fopen($path, "r");
-        if($afterOpen !== NULL) $afterOpen($handle !== FALSE);
-        if($handle === FALSE) return FALSE;
+        try{
+            $handle = @fopen($path, "r");
+            if($afterOpenAttempt !== NULL) $afterOpenAttempt($handle !== FALSE);
+            if($handle === FALSE) return FALSE;
 
-        $lockAcquired = @flock($handle, LOCK_SH | LOCK_NB);
-        if($afterLock !== NULL) $afterLock($lockAcquired);
-        if($lockAcquired === FALSE){ @fclose($handle); return FALSE; }
+            $lockAcquired = flock($handle, LOCK_SH | LOCK_NB);
+            if($afterLockAttempt !== NULL) $afterLockAttempt($lockAcquired);
+            if($lockAcquired === FALSE) return FALSE;
 
-        clearstatcache(FALSE, $path);
-        $fileSize = filesize($path);
-        $contents = $fileSize === 0 ? "" : fread($handle, $fileSize);
-        if($afterRead !== NULL) $afterRead($contents);
+            clearstatcache(FALSE, $path);
+            $fileSize = filesize($path);
+            $contents = $fileSize === 0 ? "" : fread($handle, $fileSize);
+            if($afterReadAttempt !== NULL) $afterReadAttempt($contents);
 
-        @flock($handle, LOCK_UN);
-        @fclose($handle);
-        return TRUE;
+            return TRUE;
+        }finally{
+            if($handle !== FALSE) fclose($handle);
+        }
     }, $secondsLimit, $secondsDelayBetweenTries);
 
     return $contents;
