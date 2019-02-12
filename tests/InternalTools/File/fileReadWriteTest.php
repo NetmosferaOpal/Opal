@@ -59,6 +59,12 @@ class fileReadWriteTest extends TestCase
 
     //[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 
+    public function test_read_empty_file(){
+        $path = $this->samplePath("");
+        $contents = fileRead($path, 1.0, 0.1);
+        self::assertSame("", $contents);
+    }
+
     public function test_read_nonexistent_file(){
         $path = $this->samplePath();
         $contents = fileRead($path, 1.0, 0.1);
@@ -78,6 +84,8 @@ class fileReadWriteTest extends TestCase
         });
         self::assertSame("foo", $contents);
     }
+
+    //[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 
     public function data_read_waits_for_write_to_finish(){
         yield [""];
@@ -101,6 +109,33 @@ class fileReadWriteTest extends TestCase
         self::assertSame($data, $actualData);
     }
 
+    public function data_write_waits_for_write_to_finish(){
+        $data = ["", "some data"];
+        foreach($data as $v1){
+            foreach($data as $v2){
+                yield [$v1, $v2];
+            }
+        }
+    }
+
+    /** @dataProvider data_write_waits_for_write_to_finish */
+    public function test_write_waits_for_write_to_finish(String $data1, String $data2){
+        $path = $this->samplePath();
+        $handle = fopen($path, "c");
+        flock($handle, LOCK_EX | LOCK_NB);
+        fwrite($handle, $data1);
+        $afterLock = function(Bool $lockAcquired) use(&$attempts, &$handle){
+            $attempts = ($attempts ?? 0) + 1;
+            if($attempts <= 3) self::assertFalse($lockAcquired);
+            if($attempts === 3){ flock($handle, LOCK_UN); fclose($handle); }
+            if($attempts === 4) self::assertTrue($lockAcquired);
+            self::assertLessThan(5, $attempts);
+        };
+        $written = fileWrite($path, $data2, 0755, 5.0, 0.1, NULL, NULL, $afterLock);
+        self::assertTrue($written);
+        self::assertSame($data2, file_get_contents($path));
+    }
+
     public function test_write_waits_for_read_to_finish(){
         $path = $this->samplePath("bar");
         $handle = fopen($path, "r");
@@ -114,6 +149,21 @@ class fileReadWriteTest extends TestCase
         };
         $written = fileWrite($path, "foo", 777, 5.0, 0.1, NULL, NULL, $afterLock);
         self::assertTrue($written);
+    }
+
+    public function test_read_does_not_wait_for_read_to_finish(){
+        $path = $this->samplePath("bar");
+        $handle = fopen($path, "r");
+        flock($handle, LOCK_SH | LOCK_NB);
+        $afterLock = function(Bool $lockAcquired) use(&$attempts, &$handle){
+            $attempts = ($attempts ?? 0) + 1;
+            self::assertTrue($lockAcquired);
+            self::assertSame(1, $attempts);
+            flock($handle, LOCK_UN);
+            fclose($handle);
+        };
+        $contents = fileRead($path, 5.0, 0.1, NULL, $afterLock);
+        self::assertSame("bar", $contents);
     }
 
     //[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
