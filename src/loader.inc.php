@@ -58,13 +58,10 @@ function loader(){
     };
 
     $writeAndImportNewFile = function(
-        String $file, Int $dirMode, Int $fileMode, String $source, Bool $doImportIt
-    ){
-        $requireFile = $doImportIt ? function(String $__OPAL_FILE__){
-            assert(isAbsolutePath($__OPAL_FILE__));
-            require $__OPAL_FILE__;
-        }: NULL;
-        return fileWrite($file, $source, $dirMode, 5.0, 0.0, $requireFile);
+        String $path, Int $dirMode, Int $fileMode, String $source, Bool $doImportIt
+    )use($importFile){
+        $requireFile = $doImportIt ? $importFile : NULL;
+        return fileWrite($path, $source, $dirMode, 5.0, 0.0, NULL, NULL, NULL, $requireFile);
     };
 
     $instance = new Loader(
