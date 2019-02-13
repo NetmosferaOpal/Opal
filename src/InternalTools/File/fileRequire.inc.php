@@ -3,6 +3,6 @@
 namespace Netmosfera\Opal\InternalTools\File;
 
 function fileRequire($__OPAL_FILE__){
-    assert(isAbsolutePath($__OPAL_FILE__);
+    assert(isAbsolutePath($__OPAL_FILE__));
     require $__OPAL_FILE__;
 }
