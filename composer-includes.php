@@ -1,6 +1,6 @@
 <?php
 
-require(__DIR__ . "/src/loader.inc.php");
+require(__DIR__ . "/src/Opal.inc.php");
 require(__DIR__ . "/src/InternalTools/componentFromActualFile.inc.php");
 require(__DIR__ . "/src/InternalTools/componentFromTypeName.inc.php");
 require(__DIR__ . "/src/InternalTools/isValidIdentifier.inc.php");

@@ -15,6 +15,9 @@ class Loader
     /** @var Bool */
     private $_modifiable;
 
+    /** @var Bool */
+    private $_staticMode;
+
     /** @var PackageDirectory[] */
     private $_directories;
 
@@ -22,13 +25,13 @@ class Loader
     private $_preprocessors;
 
     /** @var Closure */
-    private $_sourceToTree;
+    private $_sourceToNodes;
 
     /** @var Closure */
-    private $_treeToSource;
+    private $_nodesToSource;
 
     /** @var Closure */
-    private $_readDirectoryDeep;
+    private $_readDirectory;
 
     /** @var Closure */
     private $_readFile;
@@ -37,58 +40,61 @@ class Loader
     private $_importFile;
 
     /** @var Closure */
-    private $_writeAndImportNewFile;
+    private $_writeAndImportFile;
 
     /** @var String|NULL */
-    private $_cacheDirectory;
+    private $_compileDirectory;
 
     /** @var Int|NULL */
-    private $_cacheDirectoryMode;
+    private $_compileDirectoryPermissions;
 
     /** @var Int|NULL */
-    private $_cacheFileMode;
+    private $_compileFilePermissions;
 
     /** @var String */
-    private $_cacheStaticInclusionsFilePath;
+    private $_compileStaticImportsPath;
 
     public function __construct(
-        Closure $sourceToTree,
-        Closure $treeToSource,
-        Closure $readDirectoryDeep,
+        Bool $staticMode,
+        Closure $sourceToNodes,
+        Closure $nodesToSource,
+        Closure $readDirectory,
         Closure $readFile,
         Closure $importFile,
-        Closure $writeAndImportNewFile
+        Closure $writeAndImportFile
     ){
         $this->_modifiable = TRUE;
+
+        $this->_staticMode = $staticMode;
 
         $this->_directories = [];
 
         $this->_preprocessors = [];
 
-        $this->_sourceToTree = $sourceToTree;
-        $this->_treeToSource = $treeToSource;
-        $this->_readDirectoryDeep = $readDirectoryDeep;
+        $this->_sourceToNodes = $sourceToNodes;
+        $this->_nodesToSource = $nodesToSource;
+        $this->_readDirectory = $readDirectory;
         $this->_readFile = $readFile;
         $this->_importFile = $importFile;
-        $this->_writeAndImportNewFile = $writeAndImportNewFile;
+        $this->_writeAndImportFile = $writeAndImportFile;
 
-        $this->_cacheDirectory = NULL;
-        $this->_cacheDirectoryMode = NULL;
-        $this->_cacheFileMode = NULL;
-        $this->_cacheStaticInclusionsFilePath = "/static-inclusions.php";
+        $this->_compileDirectory = NULL;
+        $this->_compileDirectoryPermissions = NULL;
+        $this->_compileFilePermissions = NULL;
+        $this->_compileStaticImportsPath = "/static-inclusions.php";
     }
 
     private function _ensureModifiable(){
-        if($this->_modifiable === FALSE) throw new Error("The loader is already running");
+        if(!$this->_modifiable) throw new Error("The loader is already running");
     }
 
     public function addPackage(
         String $vendorName,
         String $packageName,
-        String $directoryPath
+        String $pathToPackage
     ){
         $package = new Package($vendorName, $packageName);
-        $directory = new PackageDirectory($package, $directoryPath);
+        $directory = new PackageDirectory($package, $pathToPackage);
         $this->_ensureModifiable();
         $this->_directories[$directory->package->id] = $directory;
     }
@@ -98,68 +104,37 @@ class Loader
         $this->_preprocessors[$identifier] = $preprocessor;
     }
 
-    /**
-     * Enables the loader in static mode.
-     *
-     * This is the zero-overhead mode. All resources are required straight out the
-     * provided cache directory, and no attempt will be made to preprocess unavailable
-     * ones. This is the preferred mode for production.
-     *
-     * Note that this is comparable in purpose and speed to _Composer_'s optimized
-     * class-maps.
-     *
-     * @param       String $cacheDirectory
-     */
-    public function beginStatic(String $cacheDirectory){
-        $this->_ensureModifiable();
-        $this->_modifiable = FALSE;
-
-        $this->_cacheDirectory = $cacheDirectory;
-
-        spl_autoload_register(function(String $typeName){
-            $component = componentFromTypeName($typeName);
-            $directory = $this->_directories[$component->package->id] ?? NULL;
-            if($directory === NULL) return NULL;
-            $file = $this->_cacheDirectory . $component->absolutePath;
-            ($this->_importFile)($file);
-        }, TRUE, FALSE);
-
-        ($this->_importFile)($cacheDirectory . $this->_cacheStaticInclusionsFilePath);
-    }
-
-    /**
-     * Enables the loader in "live" mode.
-     *
-     * All files are looked up and preprocessed at every request, thus guaranteeing that
-     * the result is produced by the latest available version of each PHP file. However,
-     * doing this is also very slow, therefore this mode should be used only during
-     * development.
-     *
-     * @param       String $cacheDirectory
-     * @param       Int $cacheDirectoryMode
-     * @param       Int $cacheFileMode
-     */
-    public function beginDynamic(
-        String $cacheDirectory,
-        Int $cacheDirectoryMode = 0755,
-        Int $cacheFileMode = 0644
+    public function begin(
+        String $compileDirectory,
+        Int $compileDirectoryPermissions = 0755,
+        Int $compileFilePermissions = 0644
     ){
         $this->_ensureModifiable();
         $this->_modifiable = FALSE;
 
-        $this->_cacheDirectory = $cacheDirectory;
-        $this->_cacheDirectoryMode = $cacheDirectoryMode;
-        $this->_cacheFileMode = $cacheFileMode;
+        $this->_compileDirectory = $compileDirectory;
+        $this->_compileDirectoryPermissions = $compileDirectoryPermissions;
+        $this->_compileFilePermissions = $compileFilePermissions;
 
         spl_autoload_register(function(String $typeName){
             $component = componentFromTypeName($typeName);
             if($component === NULL) return NULL;
             $directory = $this->_directories[$component->package->id] ?? NULL;
             if($directory === NULL) return NULL;
-            $this->_preprocessComponent($directory, $component, TRUE);
+
+            if($this->_staticMode){
+                $file = $this->_compileDirectory . $component->absolutePath;
+                ($this->_importFile)($file);
+            }else{
+                $this->_preprocessComponent($directory, $component, TRUE);
+            }
         }, TRUE, FALSE);
 
-        $this->_preprocessStaticallyLoadedComponents(TRUE);
+        if($this->_staticMode){
+            ($this->_importFile)($compileDirectory . $this->_compileStaticImportsPath);
+        }else{
+            $this->_preprocessStaticallyLoadedComponents(TRUE);
+        }
     }
 
     /**
@@ -169,24 +144,24 @@ class Loader
      * possible to enable the loader in static mode ({@see self::beginStatic()}) which
      * will offer the best performances.
      *
-     * @param       String $cacheDirectory
-     * @param       Int $cacheDirectoryMode
-     * @param       Int $cacheFileMode
+     * @param       String $compileDirectory
+     * @param       Int $compileDirectoryPermissions
+     * @param       Int $compileFilePermissions
      */
     public function install(
-        String $cacheDirectory,
-        Int $cacheDirectoryMode = 0755,
-        Int $cacheFileMode = 0644
+        String $compileDirectory,
+        Int $compileDirectoryPermissions = 0755,
+        Int $compileFilePermissions = 0644
     ){
         $this->_ensureModifiable();
         $this->_modifiable = FALSE;
 
-        $this->_cacheDirectory = $cacheDirectory;
-        $this->_cacheDirectoryMode = $cacheDirectoryMode;
-        $this->_cacheFileMode = $cacheFileMode;
+        $this->_compileDirectory = $compileDirectory;
+        $this->_compileDirectoryPermissions = $compileDirectoryPermissions;
+        $this->_compileFilePermissions = $compileFilePermissions;
 
         foreach($this->_directories as $directory){
-            foreach(($this->_readDirectoryDeep)($directory->path) as $file){
+            foreach(($this->_readDirectory)($directory->path) as $file){
                 $component = componentFromActualFile($directory, $file);
                 if($component !== NULL && $component->extension === ".php"){
                     $this->_preprocessComponent($directory, $component, FALSE);
@@ -202,7 +177,7 @@ class Loader
         /** @var PackageComponent[] $components */
 
         foreach($this->_directories as $directory){
-            foreach(($this->_readDirectoryDeep)($directory->path) as $file){
+            foreach(($this->_readDirectory)($directory->path) as $file){
                 $component = componentFromActualFile($directory, $file);
                 if($component !== NULL && $component->extension === ".inc.php"){
                     $this->_preprocessComponent($directory, $component, $doImportThem);
@@ -212,7 +187,7 @@ class Loader
         }
 
         $staticInclusionsSource = "<?php\n\n";
-        $staticInclusionsSource .= "// Generated by netmosfera/opal.\n";
+        $staticInclusionsSource .= "// Generated by opal/opal.\n";
         $staticInclusionsSource .= "// Do not edit this file manually!\n ";
         $staticInclusionsSource .= "\n";
 
@@ -221,7 +196,7 @@ class Loader
             $staticInclusionsSource .= "require __DIR__ . " . $fileString . ";\n";
         }
 
-        $destinationFile = $this->_cacheDirectory . $this->_cacheStaticInclusionsFilePath;
+        $destinationFile = $this->_compileDirectory . $this->_compileStaticImportsPath;
 
         file_put_contents($destinationFile, $staticInclusionsSource);
     }
@@ -232,24 +207,29 @@ class Loader
         Bool $doImportIt
     ){
         assert(isset($this->_directories[$directory->package->id]));
+
         $originFile = $directory->path . $component->relativeToPackagePath;
+
         $source = ($this->_readFile)($originFile);
         if($source === NULL) throw new Error("Unable to read $originFile");
         if($this->_preprocessors !== []){
-            $nodes = ($this->_sourceToTree)($source);
+            $nodes = ($this->_sourceToNodes)($source);
             foreach($this->_preprocessors as $preprocessor){
                 $nodes = $preprocessor($component, $nodes);
             }
-            $source = ($this->_treeToSource)($nodes);
+            $source = ($this->_nodesToSource)($nodes);
         }
-        $destinationFile = $this->_cacheDirectory . $component->absolutePath;
-        $written = ($this->_writeAndImportNewFile)(
+
+        $destinationFile = $this->_compileDirectory . $component->absolutePath;
+
+        $written = ($this->_writeAndImportFile)(
             $destinationFile,
-            $this->_cacheDirectoryMode,
-            $this->_cacheFileMode,
+            $this->_compileDirectoryPermissions,
+            $this->_compileFilePermissions,
             $source,
             $doImportIt
         );
+
         if($written === FALSE) throw new Error("Unable to write $destinationFile");
     }
 }
