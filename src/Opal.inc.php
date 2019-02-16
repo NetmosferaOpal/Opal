@@ -51,7 +51,7 @@ function Opal(){
         NETMOSFERA_OPAL_LOADER_STATIC,
         $sourceToNodes,
         $nodesToSource,
-        Closure::fromCallable("Netmosfera\\Opal\\InternalTools\\File\\dirRead"),
+        Closure::fromCallable("Netmosfera\\Opal\\InternalTools\\File\\dirReadRecursive"),
         $readFile,
         Closure::fromCallable("Netmosfera\\Opal\\InternalTools\\File\\fileRequire"),
         $writeAndImportFile

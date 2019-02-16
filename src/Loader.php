@@ -6,6 +6,8 @@ use Closure;
 use Error;
 use function Netmosfera\Opal\InternalTools\componentFromActualFile;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
+use function sort;
+use const SORT_STRING;
 use function spl_autoload_register;
 use function spl_object_hash;
 use function var_export;
@@ -181,7 +183,7 @@ class Loader
                 $component = componentFromActualFile($directory, $file);
                 if($component !== NULL && $component->extension === ".inc.php"){
                     $this->_preprocessComponent($directory, $component, $doImportThem);
-                    $components[] = $component;
+                    $components[] = $component->absolutePath;
                 }
             }
         }
@@ -192,7 +194,7 @@ class Loader
         $staticInclusionsSource .= "\n";
 
         foreach($components as $component){
-            $fileString = var_export($component->absolutePath, TRUE);
+            $fileString = var_export($component, TRUE);
             $staticInclusionsSource .= "require __DIR__ . " . $fileString . ";\n";
         }
 

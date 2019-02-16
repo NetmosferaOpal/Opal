@@ -6,6 +6,7 @@ require(__DIR__ . "/src/InternalTools/componentFromTypeName.inc.php");
 require(__DIR__ . "/src/InternalTools/isValidIdentifier.inc.php");
 require(__DIR__ . "/src/InternalTools/isValidIdentifiers.inc.php");
 require(__DIR__ . "/src/InternalTools/File/dirRead.inc.php");
+require(__DIR__ . "/src/InternalTools/File/dirReadRecursive.inc.php");
 require(__DIR__ . "/src/InternalTools/File/fileRead.inc.php");
 require(__DIR__ . "/src/InternalTools/File/fileRequire.inc.php");
 require(__DIR__ . "/src/InternalTools/File/fileWrite.inc.php");

@@ -2,7 +2,6 @@
 
 namespace Netmosfera\Opal\InternalTools\File;
 use Closure;
-use const LOCK_UN;
 use function assert;
 use function clearstatcache;
 use function dirname;
