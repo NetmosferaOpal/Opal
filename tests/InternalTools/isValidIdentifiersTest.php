@@ -7,7 +7,7 @@ use function Netmosfera\Opal\InternalTools\isValidIdentifiers;
 
 class isValidIdentifiersTest extends TestCase
 {
-    function data1(){
+    public function data1(){
         yield [["Foo"], TRUE];
         yield [["Qux", "Foo", "Bar"], TRUE];
 

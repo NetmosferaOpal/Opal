@@ -7,7 +7,7 @@ use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
 
 class isAbsolutePathTest extends TestCase
 {
-    function data1(){
+    public function data1(){
         yield ["c:\\", TRUE];
         yield ["c:/", TRUE];
         yield ["C:\\", TRUE];

@@ -11,7 +11,7 @@ use function Netmosfera\Opal\InternalTools\componentFromActualFile;
 
 class componentFromActualFileTest extends TestCase
 {
-    function data1(){
+    public function data1(){
         // different prefix
         yield ["/a", "/b/file.php"];
         yield ["/a", "/A/file.php"];
@@ -35,7 +35,7 @@ class componentFromActualFileTest extends TestCase
         componentFromActualFile($directory, $file);
     }
 
-    function data2(){
+    public function data2(){
         $dir = "c:\\aaa\\bbb\\";
         foreach(["", "\\prefix", "\\prefix\\prefix"] as $prefix){
             yield [$dir, $dir . $prefix . "\\1abc.php"];
@@ -55,7 +55,7 @@ class componentFromActualFileTest extends TestCase
         self::assertSame(NULL, componentFromActualFile($directory, $file));
     }
 
-    function data3(){
+    public function data3(){
         $m = function(array $identifiers, $extension){
             $package = new Package("StarkIndustries", "IronManSuit");
             return new PackageComponent($package, $identifiers, $extension);

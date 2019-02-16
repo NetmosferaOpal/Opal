@@ -9,7 +9,7 @@ use function Netmosfera\Opal\InternalTools\componentFromTypeName;
 
 class componentFromTypeNameTest extends TestCase
 {
-    function data1(){
+    public function data1(){
         yield ["Foo"];
         yield ["Foo\\Bar"];
         yield ["Foo//Bar"];
@@ -21,7 +21,7 @@ class componentFromTypeNameTest extends TestCase
         self::assertSame(NULL, componentFromTypeName($typeName));
     }
 
-    function data2(){
+    public function data2(){
         $package = new Package("Foo", "Bar");
 
         yield [
