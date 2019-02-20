@@ -1,12 +1,12 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\InternalTools\File;
+namespace Netmosfera\OpalTests\InternalTools;
 
 use PHPUnit\Framework\TestCase;
 use const DIRECTORY_SEPARATOR as DS;
 use const SORT_STRING;
 use function base64_encode;
-use function Netmosfera\Opal\InternalTools\File\dirReadRecursive;
+use function Netmosfera\Opal\InternalTools\dirReadRecursive;
 use function random_bytes;
 use function random_int;
 use function rmdir;

@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\InternalTools\File;
+namespace Netmosfera\OpalTests\InternalTools;
 
 use PHPUnit\Framework\TestCase;
-use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
+use function Netmosfera\Opal\InternalTools\isAbsolutePath;
 
 class isAbsolutePathTest extends TestCase
 {

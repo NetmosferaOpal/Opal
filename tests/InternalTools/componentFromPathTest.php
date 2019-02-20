@@ -7,9 +7,9 @@ use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
 use PHPUnit\Framework\TestCase;
-use function Netmosfera\Opal\InternalTools\componentFromActualFile;
+use function Netmosfera\Opal\InternalTools\componentFromPath;
 
-class componentFromActualFileTest extends TestCase
+class componentFromPathTest extends TestCase
 {
     public function data1(){
         // different prefix
@@ -32,7 +32,7 @@ class componentFromActualFileTest extends TestCase
         $this->expectException(Exception::CLASS);
         $package = new Package("StarkIndustries", "IronManSuit");
         $directory = new PackageDirectory($package, $directory);
-        componentFromActualFile($directory, $file);
+        componentFromPath($directory, $file);
     }
 
     public function data2(){
@@ -52,7 +52,7 @@ class componentFromActualFileTest extends TestCase
         // test returns null if in-package identifiers are not valid php identifiers
         $package = new Package("StarkIndustries", "IronManSuit");
         $directory = new PackageDirectory($package, $directory);
-        self::assertSame(NULL, componentFromActualFile($directory, $file));
+        self::assertSame(NULL, componentFromPath($directory, $file));
     }
 
     public function data3(){
@@ -74,6 +74,6 @@ class componentFromActualFileTest extends TestCase
         // test that returns the PackageComponent object
         $package = new Package("StarkIndustries", "IronManSuit");
         $directory = new PackageDirectory($package, $directory);
-        self::assertEquals($expected, componentFromActualFile($directory, $file));
+        self::assertEquals($expected, componentFromPath($directory, $file));
     }
 }

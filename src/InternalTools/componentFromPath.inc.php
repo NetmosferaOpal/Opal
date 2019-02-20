@@ -5,7 +5,6 @@ namespace Netmosfera\Opal\InternalTools;
 use Exception;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
-use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
 
 /**
  * Creates a {@see PackageComponent} from a local file path.
@@ -25,7 +24,7 @@ use function Netmosfera\Opal\InternalTools\File\isAbsolutePath;
  *
  * @throws
  */
-function componentFromActualFile(
+function componentFromPath(
     PackageDirectory $directory,
     String $file
 ): ?PackageComponent{
@@ -63,9 +62,5 @@ function componentFromActualFile(
         }
     }
 
-    return new PackageComponent(
-        $directory->package,
-        $identifiers,
-        $extension
-    );
+    return new PackageComponent($directory->package, $identifiers, $extension);
 }

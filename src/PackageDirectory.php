@@ -1,6 +1,7 @@
 <?php declare(strict_types = 1);
 
 namespace Netmosfera\Opal;
+use Error;
 
 /**
  * Local directory in which a {@see Package} can be found.
@@ -16,8 +17,8 @@ class PackageDirectory
     /**
      * @var         String
      * The directory in which this package resides, to be intended as ASCII based. The
-     * encoding of the text is not relevant as long the path is accessible, however, it is
-     * ASCII-based and it is trimmed off of any directory-separator suffix (`/` and `\`).
+     * encoding of the text (the high bytes) is not relevant as long the path is
+     * accessible.
      */
     public $path;
 

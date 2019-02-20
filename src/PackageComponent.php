@@ -50,7 +50,7 @@ class PackageComponent
     /**
      * @var         String
      * For example, if the component is `StarkIndustries\IronMan\Weapons\Minigun.php`
-     * this property will be set to "StarkIndustries/IronMan/Weapons/Minigun.php".
+     * this property will be set to "/StarkIndustries/IronMan/Weapons/Minigun.php".
      */
     public $absolutePath;
 
@@ -85,9 +85,5 @@ class PackageComponent
         $this->relativeToPackagePath = $stringifiedIdentifiers . $extension;
 
         $this->absolutePath = $prefix . $this->relativeToPackagePath;
-    }
-
-    public function __toString(): String{
-        return $this->absolutePath;
     }
 }

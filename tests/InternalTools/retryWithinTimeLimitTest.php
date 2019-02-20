@@ -1,10 +1,10 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\InternalTools\File;
+namespace Netmosfera\OpalTests\InternalTools;
 
 use PHPUnit\Framework\TestCase;
 use function array_sum;
-use function Netmosfera\Opal\InternalTools\File\retryWithinTimeLimit;
+use function Netmosfera\Opal\InternalTools\retryWithinTimeLimit;
 
 class retryWithinTimeLimitTest extends TestCase
 {
