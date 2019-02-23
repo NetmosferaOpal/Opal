@@ -7,10 +7,13 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 
 function dirReadRecursive(String $directory){
-    $directory = rtrim($directory, "\\/");
+    assert(isNormalizedPath($directory));
+
     $flags = RecursiveDirectoryIterator::SKIP_DOTS;
     $directoryIterator = new RecursiveDirectoryIterator($directory, $flags);
+
     $flattenedDirectoryIterator = new RecursiveIteratorIterator($directoryIterator);
+
     $files = [];
     foreach($flattenedDirectoryIterator as $fileInfo){
         /** @var SplFileInfo $fileInfo */

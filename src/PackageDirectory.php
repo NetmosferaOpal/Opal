@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 namespace Netmosfera\Opal;
-use Error;
+use function Netmosfera\Opal\InternalTools\isNormalizedPath;
 
 /**
  * Local directory in which a {@see Package} can be found.
@@ -36,7 +36,7 @@ class PackageDirectory
      * See {@see self::$path}.
      */
     public function __construct(Package $package, String $path){
-        $path = rtrim($path, "\\/");
+        assert(isNormalizedPath($path));
         $this->package = $package;
         $this->path = $path;
         $this->pathLength = strlen($path);

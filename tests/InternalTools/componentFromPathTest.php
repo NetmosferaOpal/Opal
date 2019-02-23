@@ -36,7 +36,7 @@ class componentFromPathTest extends TestCase
     }
 
     public function data2(){
-        $dir = "c:\\aaa\\bbb\\";
+        $dir = "c:\\aaa\\bbb";
         foreach(["", "\\prefix", "\\prefix\\prefix"] as $prefix){
             yield [$dir, $dir . $prefix . "\\1abc.php"];
             yield [$dir, $dir . $prefix . "\\abc-.php"];
@@ -65,7 +65,7 @@ class componentFromPathTest extends TestCase
         foreach(["", ".php", ".inc.php"] as $ext){
             yield [$prefix, $prefix . "\\abc" . $ext,  $m(["abc"], $ext)];
             yield [$prefix, $prefix . "\\abc\\foo" . $ext,  $m(["abc", "foo"], $ext)];
-            yield [$prefix, $prefix . "//abc//foo" . $ext,  $m(["abc", "foo"], $ext)];
+            yield [$prefix, $prefix . "/abc/foo" . $ext,  $m(["abc", "foo"], $ext)];
         }
     }
 

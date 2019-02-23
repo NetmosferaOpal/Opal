@@ -5,11 +5,11 @@ namespace Netmosfera\Opal\Loaders;
 use Closure;
 use Error;
 use Netmosfera\Opal\PackageDirectory;
-use function Netmosfera\Opal\InternalTools\_preprocessComponent;
-use function Netmosfera\Opal\InternalTools\_preprocessStaticComponents;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
 use function Netmosfera\Opal\InternalTools\dirEmpty;
 use function Netmosfera\Opal\InternalTools\dirLock;
+use function Netmosfera\Opal\InternalTools\preprocessComponent;
+use function Netmosfera\Opal\InternalTools\preprocessStaticComponents;
 use function spl_autoload_register;
 use function spl_autoload_unregister;
 
@@ -57,7 +57,7 @@ class DynamicLoader implements Loader
             if($component === NULL) return NULL;
             $directory = $this->_directories[$component->package->id] ?? NULL;
             if($directory === NULL) return NULL;
-            _preprocessComponent(
+            preprocessComponent(
                 $directory, $component, $this->_preprocessors, $this->_compileDirectory,
                 TRUE, $this->_compileDirectoryPermissions, $this->_compileFilePermissions
             );
@@ -65,7 +65,7 @@ class DynamicLoader implements Loader
 
         spl_autoload_register($this->_autoloader, TRUE, FALSE);
 
-        _preprocessStaticComponents(
+        preprocessStaticComponents(
             $this->_directories, $this->_preprocessors, $this->_compileDirectory, TRUE,
             $this->_compileDirectoryPermissions, $this->_compileFilePermissions
         );

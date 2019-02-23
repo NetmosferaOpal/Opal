@@ -6,7 +6,7 @@ use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
 use const DIRECTORY_SEPARATOR as DS;
 
-function _preprocessStaticComponents(
+function preprocessStaticComponents(
     Array $directories,
     Array $preprocessors,
     String $compileDirectory,
@@ -14,7 +14,7 @@ function _preprocessStaticComponents(
     ?Int $directoryPermissions,
     ?Int $filePermissions
 ){
-    assert($compileDirectory === rtrim($compileDirectory, "\\/"));
+    assert(isNormalizedPath($compileDirectory));
 
     $components = [];
     /** @var PackageComponent[] $components */
@@ -24,7 +24,7 @@ function _preprocessStaticComponents(
         foreach(dirReadRecursive($directory->path) as $filePath){
             $component = componentFromPath($directory, $filePath);
             if($component !== NULL && $component->extension === ".inc.php"){
-                _preprocessComponent(
+                preprocessComponent(
                     $directory, $component, $preprocessors, $compileDirectory,
                     $executeIt, $directoryPermissions, $filePermissions
                 );

@@ -2,6 +2,7 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
+use function chmod;
 use Closure;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
@@ -9,7 +10,7 @@ use PhpParser\ParserFactory as PF;
 use PhpParser\PrettyPrinter\Standard;
 use function umask;
 
-function _preprocessComponent(
+function preprocessComponent(
     PackageDirectory $directory,
     PackageComponent $component,
     Array $preprocessors,
@@ -18,6 +19,8 @@ function _preprocessComponent(
     ?Int $directoryPermissions,
     ?Int $filePermissions
 ){
+    assert(isNormalizedPath($compileDirectory));
+
     $originFile = $directory->path . $component->relativeToPackagePath;
 
     $source = file_get_contents($originFile);
@@ -34,9 +37,8 @@ function _preprocessComponent(
 
     $saveUMask = umask(0);
     @mkdir(dirname($destinationFile), $directoryPermissions ?? 0755, TRUE);
-    umask($saveUMask);
-
-    // @TODO umask file 0644
     file_put_contents($destinationFile, $source);
+    chmod($destinationFile, $filePermissions);
     if($executeIt) require $destinationFile; // @TODO clean scope
+    umask($saveUMask);
 }

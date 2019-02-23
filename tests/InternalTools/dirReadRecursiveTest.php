@@ -14,7 +14,7 @@ use function rmdir;
 class dirReadRecursiveTest extends TestCase
 {
     public function test_lots_of_files(){
-        $bd = __DIR__ . DS . "temp_directory" . DS;
+        $bd = __DIR__ . DS . "temp_directory";
 
         $countOfFiles = -1;
         $fileNames = function() use(&$countOfFiles){
@@ -32,7 +32,7 @@ class dirReadRecursiveTest extends TestCase
         foreach(range(1, 4) as $a){
             foreach(range(1, 4) as $b){
                 foreach(range(1, 4) as $c){
-                    mkdir($bd . "a$a" . DS . "b$b" . DS . "c$c", 0777, TRUE);
+                    mkdir($bd . DS . "a$a" . DS . "b$b" . DS . "c$c", 0777, TRUE);
                 }
             }
         }
@@ -41,17 +41,17 @@ class dirReadRecursiveTest extends TestCase
 
         foreach(range(1, 4) as $a){
             foreach($fileNames() as $fileName){
-                $file = $files[] = $bd . "a$a" . DS . $fileName;
+                $file = $files[] = $bd . DS . "a$a" . DS . $fileName;
                 file_put_contents($file, "");
             }
             foreach(range(1, 4) as $b){
                 foreach($fileNames() as $fileName){
-                    $file = $files[] = $bd . "a$a" . DS . "b$b" . $fileName;
+                    $file = $files[] = $bd . DS . "a$a" . DS . "b$b" . $fileName;
                     file_put_contents($file, "");
                 }
                 foreach(range(1, 4) as $c){
                     foreach($fileNames() as $fileName){
-                        $file = $files[] = $bd . "a$a" . DS . "b$b" . DS . "c$c" . $fileName;
+                        $file = $files[] = $bd . DS . "a$a" . DS . "b$b" . DS . "c$c" . $fileName;
                         file_put_contents($file, "");
                     }
                 }
@@ -70,11 +70,11 @@ class dirReadRecursiveTest extends TestCase
         foreach(range(1, 4) as $a){
             foreach(range(1, 4) as $b){
                 foreach(range(1, 4) as $c){
-                    rmdir($bd . "a$a" . DS . "b$b" . DS . "c$c");
+                    rmdir($bd . DS . "a$a" . DS . "b$b" . DS . "c$c");
                 }
-                rmdir($bd . "a$a" . DS . "b$b");
+                rmdir($bd . DS . "a$a" . DS . "b$b");
             }
-            rmdir($bd . "a$a");
+            rmdir($bd . DS . "a$a");
         }
         rmdir($bd);
 

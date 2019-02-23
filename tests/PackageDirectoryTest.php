@@ -9,21 +9,14 @@ use PHPUnit\Framework\TestCase;
 class PackageDirectoryTest extends TestCase
 {
     public function data(){
-        yield ["c:\\bar\\baz\\", "c:\\bar\\baz", strlen("c:\\bar\\baz")];
-        yield ["c:\\bar\\baz\\\\", "c:\\bar\\baz", strlen("c:\\bar\\baz")];
-        yield ["c:\\bar\\baz\\\\\\", "c:\\bar\\baz", strlen("c:\\bar\\baz")];
-
-        yield ["c:/bar/baz/", "c:/bar/baz", strlen("c:/bar/baz")];
-        yield ["c:/bar/baz//", "c:/bar/baz", strlen("c:/bar/baz")];
-        yield ["c:/bar/baz///", "c:/bar/baz", strlen("c:/bar/baz")];
-
-        yield ["/bar/baz/", "/bar/baz", strlen("/bar/baz")];
-        yield ["/bar/baz//", "/bar/baz", strlen("/bar/baz")];
-        yield ["/bar/baz///", "/bar/baz", strlen("/bar/baz")];
-
-        yield ["/", "", 0];
-        yield ["//", "", 0];
-        yield ["///", "", 0];
+        foreach(["\\", "/"] as $s){
+            yield ["c:", "c:", strlen("c:")];
+            yield ["c:{$s}bar", "c:{$s}bar", strlen("c:{$s}bar")];
+            yield ["c:{$s}bar{$s}baz", "c:{$s}bar{$s}baz", strlen("c:{$s}bar{$s}baz")];
+            yield ["", "", strlen("")];
+            yield ["{$s}bar", "{$s}bar", strlen("{$s}bar")];
+            yield ["{$s}bar{$s}baz", "{$s}bar{$s}baz", strlen("{$s}bar{$s}baz")];
+        }
     }
 
     /** @dataProvider data */

@@ -29,7 +29,7 @@ function componentFromPath(
     String $file
 ): ?PackageComponent{
 
-    assert(isAbsolutePath($file));
+    assert(isNormalizedPath($file));
 
     if(
         substr($file, 0, $directory->pathLength) !== $directory->path ||

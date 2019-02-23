@@ -6,6 +6,7 @@ use Error;
 use const DIRECTORY_SEPARATOR as DS;
 
 function dirLock(String $directory){
+    assert(isNormalizedPath($directory));
 
     $lockFilePath = $directory . DS . "opal.lock";
     $locked = retryWithinTimeLimit(function() use(&$lockHandle, &$lockFilePath){

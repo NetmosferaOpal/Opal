@@ -2,8 +2,8 @@
 
 namespace Netmosfera\OpalTests\InternalTools;
 
-use function Netmosfera\Opal\InternalTools\dirEmpty;
 use PHPUnit\Framework\TestCase;
+use function Netmosfera\Opal\InternalTools\dirEmpty;
 
 class dirEmptyTest extends TestCase
 {
