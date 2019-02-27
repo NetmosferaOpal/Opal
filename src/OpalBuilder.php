@@ -4,7 +4,6 @@ namespace Netmosfera\Opal;
 
 use Closure;
 use Error;
-use Netmosfera\Opal\Loaders\Loader;
 use function spl_object_hash;
 
 class OpalBuilder

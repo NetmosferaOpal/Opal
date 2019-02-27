@@ -1,8 +1,8 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\Loaders;
+namespace Netmosfera\OpalTests;
 
-use Netmosfera\Opal\Loaders\StaticLoader;
+use Netmosfera\Opal\StaticLoader;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageDirectory;
 use PHPUnit\Framework\TestCase;

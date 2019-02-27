@@ -1,8 +1,8 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\Loaders;
+namespace Netmosfera\OpalTests;
 
-use Netmosfera\Opal\Loaders\DynamicLoader;
+use Netmosfera\Opal\DynamicLoader;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;

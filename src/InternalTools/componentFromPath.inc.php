@@ -2,7 +2,6 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
-use Exception;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
 
@@ -15,34 +14,16 @@ use Netmosfera\Opal\PackageDirectory;
  * appears after the first `.` in the last identifier is collected in
  * {@see PackageComponent::$extension}. If all file-names in the path are valid PHP
  * identifiers a {@see PackageComponent} object is returned, otherwise `NULL`.
- *
- * @param           String $path
- *
- * @param           PackageDirectory $directory
- *
- * @return          PackageComponent|NULL
- *
- * @throws
  */
-function componentFromPath(
-    PackageDirectory $directory,
-    String $path
-): ?PackageComponent{
-
+function componentFromPath(PackageDirectory $directory, String $path): ?PackageComponent{
     assert(isNormalizedPath($path));
-
-    if(
-        substr($path, 0, $directory->pathLength) !== $directory->path ||
-        ($path[$directory->pathLength] !== "/" && $path[$directory->pathLength] !== "\\")
-    ){
-        throw new Exception("The file is not located in the provided directory");
-    }
+    assert(pathBelongsToPackageDirectory($path, $directory));
 
     $relativePath = substr($path, $directory->pathLength);
 
     $identifiers = preg_split("@[\\\\/]+@", $relativePath);
-    // Remove the first because string starts with one or more directory
-    // separators, therefore the first is empty
+    // Remove the first because the relative path starts with a
+    // directory separator, therefore the first is empty
     array_shift($identifiers);
 
     $fileName = $identifiers[count($identifiers) - 1];

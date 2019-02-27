@@ -9,11 +9,8 @@ use Netmosfera\Opal\PackageComponent;
  * Creates a {@see PackageComponent} from a type name.
  *
  * Returns a {@see PackageComponent} in the quickest way possible, without performing any
- * validation (unless assertions are enabled).
- *
- * @param           String $typeName
- *
- * @return          PackageComponent|NULL
+ * validation (unless assertions are enabled). Returns `NULL` if the provided type is not
+ * in the format `VendorName\PackageName\*`.
  */
 function componentFromTypeName(String $typeName): ?PackageComponent{
     $identifiers = explode("\\", $typeName);

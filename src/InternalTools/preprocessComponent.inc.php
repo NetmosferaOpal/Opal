@@ -2,12 +2,12 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
-use function chmod;
 use Closure;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackageDirectory;
 use PhpParser\ParserFactory as PF;
 use PhpParser\PrettyPrinter\Standard;
+use function chmod;
 use function umask;
 
 function preprocessComponent(

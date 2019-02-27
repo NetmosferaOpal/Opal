@@ -8,31 +8,10 @@ use function Netmosfera\Opal\InternalTools\isValidIdentifier;
  */
 class Package
 {
-    /**
-     * @var         String
-     * The vendor's name.
-     */
-    public $vendorIdentifier;
+    /** @var String */ public $vendorIdentifier;
+    /** @var String */ public $packageIdentifier;
+    /** @var String */ public $id;
 
-    /**
-     * @var         String
-     * The package's own name.
-     */
-    public $packageIdentifier;
-
-    /**
-     * @var         String
-     * A string identifier for this package; used to uniquely identify this package.
-     */
-    public $id;
-
-    /**
-     * @param       String $vendorIdentifier
-     * See {@see self::$vendorIdentifier}.
-     *
-     * @param       String $packageIdentifier
-     * See {@see self::$packageIdentifier}.
-     */
     public function __construct(String $vendorIdentifier, String $packageIdentifier){
         // Intentionally checked with assert(); this way the overhead
         // is reduced to the bare minimum in production.

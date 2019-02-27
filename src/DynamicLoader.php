@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\Opal\Loaders;
+namespace Netmosfera\Opal;
 
 use Closure;
 use Error;
@@ -38,7 +38,7 @@ class DynamicLoader implements Loader
     ){
         if($this->_state !== self::NOT_STARTED) throw new Error("Not NOT_STARTED");
 
-        $this->_lock = dirLock($compileDirectory, $compileDirectoryPermissions);
+        $this->_lock = dirLock($compileDirectory, $compileDirectoryPermissions); // @TODO this doesn't throw anymore
 
         $this->_state = self::STARTED;
 

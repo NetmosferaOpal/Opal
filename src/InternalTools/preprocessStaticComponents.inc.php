@@ -26,7 +26,7 @@ function preprocessStaticComponents(
             if($component !== NULL && $component->extension === ".inc.php"){
                 preprocessComponent(
                     $directory, $component, $preprocessors, $compileDirectory,
-                    $executeIt, $directoryPermissions, $filePermissions
+                    FALSE, $directoryPermissions, $filePermissions
                 );
                 $components[] = $component->absolutePath;
             }
@@ -46,4 +46,6 @@ function preprocessStaticComponents(
     $destinationFile = $compileDirectory . DS . "static-inclusions.php";
 
     file_put_contents($destinationFile, $staticInclusionsSource);
+
+    if($executeIt) require $destinationFile; // @TODO clean scope in file
 }

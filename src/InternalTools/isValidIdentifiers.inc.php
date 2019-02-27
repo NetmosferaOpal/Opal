@@ -4,10 +4,6 @@ namespace Netmosfera\Opal\InternalTools;
 
 /**
  * Returns `TRUE` if the array contains valid identifiers, and at least one.
- *
- * @param           String[] $identifiers
- *
- * @returns         Bool
  */
 function isValidIdentifiers(array $identifiers): Bool{
     if(count($identifiers) < 1){

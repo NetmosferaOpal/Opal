@@ -3,6 +3,7 @@
 namespace Netmosfera\Opal\InternalTools;
 
 use const DIRECTORY_SEPARATOR as DS;
+use function umask;
 
 class LockTimeout{}
 class NonEmptyDirectory{}
@@ -20,8 +21,10 @@ function dirLock(
     $locked = retryWithinTimeLimit(function() use(
         &$lockHandle, &$lockFilePath, &$directory, &$directoryPermissions
     ){
+        $saveUMask = umask(0);
         @mkdir($directory, $directoryPermissions, TRUE);
         $lockHandle = @fopen($lockFilePath, "c");
+        umask($saveUMask);
         if($lockHandle === FALSE) return FALSE;
         $locked = flock($lockHandle, LOCK_EX | LOCK_NB);
         return $locked;

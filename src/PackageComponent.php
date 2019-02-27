@@ -18,52 +18,30 @@ use function Netmosfera\Opal\InternalTools\isValidIdentifiers;
  */
 class PackageComponent
 {
-    /**
-     * @var         Package
-     * The package to which the component belongs.
-     */
-    public $package;
+    /** @var Package */ public $package;
+    /** @var String[] */ public $identifiers;
 
     /**
-     * @var         String[]
-     * The identifiers used to locate the component within the package.
-     */
-    public $identifiers;
-
-    /**
-     * @var         String
      * The extension of the file; this is usually ".php". For example files that cannot be
      * autoloaded are distinguished by files that can be autoloaded using a different
      * extension. This value includes all extensions, and it's always prefixed by a `.`
      * unless the file had no extension - in that case this property is set to a empty
      * string.
      */
-    public $extension;
+    /** @var String */ public $extension;
 
     /**
-     * @var         String
-     * For example, if the component is `StarkIndustries\IronMan\Weapons\Minigun.php`
+     * For example, if the component is `StarkIndustries/IronMan/Weapons/Minigun.php`
      * this property will be set to "/Weapons/Minigun.php".
      */
-    public $relativeToPackagePath;
+    /** @var String */ public $relativeToPackagePath;
 
     /**
-     * @var         String
-     * For example, if the component is `StarkIndustries\IronMan\Weapons\Minigun.php`
+     * For example, if the component is `StarkIndustries/IronMan/Weapons/Minigun.php`
      * this property will be set to "/StarkIndustries/IronMan/Weapons/Minigun.php".
      */
-    public $absolutePath;
+    /** @var String */ public $absolutePath;
 
-    /**
-     * @param       Package $package
-     * See {@see self::$package}.
-     *
-     * @param       String[] $identifiers
-     * See {@see self::$identifiers}.
-     *
-     * @param       String $extension
-     * See {@see self::$extension}.
-     */
     public function __construct(
         Package $package,
         array $identifiers,
