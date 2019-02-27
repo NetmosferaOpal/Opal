@@ -5,10 +5,8 @@ namespace Netmosfera\OpalTests\InternalTools;
 use PHPUnit\Framework\TestCase;
 use const DIRECTORY_SEPARATOR as DS;
 use const SORT_STRING;
-use function base64_encode;
 use function Netmosfera\Opal\InternalTools\dirReadRecursive;
 use function random_bytes;
-use function random_int;
 use function rmdir;
 
 class dirReadRecursiveTest extends TestCase
@@ -22,9 +20,7 @@ class dirReadRecursiveTest extends TestCase
             if($countOfFiles === 0) return [];
             $fileNames = [];
             foreach(range(1, $countOfFiles) as $_){
-                $name = base64_encode(random_bytes(random_int(1, 30)));
-                $nameClean = preg_replace("/[^a-zA-Z0-9]+/", "_", $name);
-                $fileNames[] = $nameClean . ".txt";
+                $fileNames[] = "f" . bin2hex(random_bytes(5)) . ".txt";
             }
             return $fileNames;
         };
