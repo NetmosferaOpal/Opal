@@ -3,9 +3,11 @@
 namespace Netmosfera\Opal;
 
 use Error;
+use Netmosfera\Opal\Loaders\DynamicLoader;
+use Netmosfera\Opal\Loaders\StaticLoader;
 use function defined;
 
-function Opal(){
+function Opal(): OpalBuilder{
     static $instance;
 
     if($instance !== NULL){
@@ -18,7 +20,9 @@ function Opal(){
         );
     }
 
-    $instance = new Loader(NETMOSFERA_OPAL_LOADER_STATIC);
+    $loader = NETMOSFERA_OPAL_LOADER_STATIC ? new StaticLoader() : new DynamicLoader();
+
+    $instance = new OpalBuilder($loader);
 
     return $instance;
 }

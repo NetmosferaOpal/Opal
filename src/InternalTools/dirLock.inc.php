@@ -2,27 +2,40 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
-use Error;
 use const DIRECTORY_SEPARATOR as DS;
 
-function dirLock(String $directory){
+class LockTimeout{}
+class NonEmptyDirectory{}
+
+function dirLock(
+    String $directory,
+    ?Int $directoryPermissions,
+    Int $timeout = 30
+){
     assert(isNormalizedPath($directory));
 
+    $directoryPermissions = $directoryPermissions ?? 0755;
+
     $lockFilePath = $directory . DS . "opal.lock";
-    $locked = retryWithinTimeLimit(function() use(&$lockHandle, &$lockFilePath){
+    $locked = retryWithinTimeLimit(function() use(
+        &$lockHandle, &$lockFilePath, &$directory, &$directoryPermissions
+    ){
+        @mkdir($directory, $directoryPermissions, TRUE);
         $lockHandle = @fopen($lockFilePath, "c");
         if($lockHandle === FALSE) return FALSE;
         $locked = flock($lockHandle, LOCK_EX | LOCK_NB);
         return $locked;
-    }, 30.0, 0.0);
+    }, (Float)$timeout, 0.0);
 
-    if(!$locked) throw new Error("Unable to lock the directory within 30 seconds");
+    if(!$locked) return new LockTimeout();
+
+    /** @var Resource $lockHandle */
 
     $actualContents = glob($directory . DS . "*");
     $isDirectoryNotEmpty = $actualContents !== [$lockFilePath];
     if($isDirectoryNotEmpty){
         fclose($lockHandle);
-        throw new Error("The directory $directory is not empty");
+        return new NonEmptyDirectory();
     }
 
     return $lockHandle;

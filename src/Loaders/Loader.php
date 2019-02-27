@@ -4,6 +4,11 @@ namespace Netmosfera\Opal\Loaders;
 
 interface Loader
 {
-    public function start();
-    public function end();
+    public function start(
+        Array $directories,
+        Array $preprocessors,
+        String $compileDirectory,
+        Int $compileDirectoryPermissions,
+        Int $compileFilePermissions
+    );
 }

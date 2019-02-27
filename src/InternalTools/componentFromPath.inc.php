@@ -9,14 +9,14 @@ use Netmosfera\Opal\PackageDirectory;
 /**
  * Creates a {@see PackageComponent} from a local file path.
  *
- * The directory's path in `$directory` is taken out of `$file`. If `$file` has a
+ * The directory's path in `$directory` is taken out of `$path`. If `$path` has a
  * different directory prefix, the function will throw an error. The remaining path is
  * split in file-names and each one is checked to be a valid PHP identifier. Anything that
  * appears after the first `.` in the last identifier is collected in
  * {@see PackageComponent::$extension}. If all file-names in the path are valid PHP
  * identifiers a {@see PackageComponent} object is returned, otherwise `NULL`.
  *
- * @param           String $file
+ * @param           String $path
  *
  * @param           PackageDirectory $directory
  *
@@ -26,21 +26,21 @@ use Netmosfera\Opal\PackageDirectory;
  */
 function componentFromPath(
     PackageDirectory $directory,
-    String $file
+    String $path
 ): ?PackageComponent{
 
-    assert(isNormalizedPath($file));
+    assert(isNormalizedPath($path));
 
     if(
-        substr($file, 0, $directory->pathLength) !== $directory->path ||
-        ($file[$directory->pathLength] !== "/" && $file[$directory->pathLength] !== "\\")
+        substr($path, 0, $directory->pathLength) !== $directory->path ||
+        ($path[$directory->pathLength] !== "/" && $path[$directory->pathLength] !== "\\")
     ){
         throw new Exception("The file is not located in the provided directory");
     }
 
-    $relativeFile = substr($file, $directory->pathLength);
+    $relativePath = substr($path, $directory->pathLength);
 
-    $identifiers = preg_split("@[\\\\/]+@", $relativeFile);
+    $identifiers = preg_split("@[\\\\/]+@", $relativePath);
     // Remove the first because string starts with one or more directory
     // separators, therefore the first is empty
     array_shift($identifiers);

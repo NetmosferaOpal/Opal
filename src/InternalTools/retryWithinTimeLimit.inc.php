@@ -19,8 +19,6 @@ use Closure;
  * @return          Bool
  * Returns `TRUE` if the execution of `$function` succeeded within the allowed time limit,
  * or `FALSE` if the timeout was hit.
- *
- * @throws
  */
 function retryWithinTimeLimit(
     Closure $function,

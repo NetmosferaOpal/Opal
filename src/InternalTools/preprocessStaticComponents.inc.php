@@ -39,7 +39,7 @@ function preprocessStaticComponents(
     $staticInclusionsSource .= "\n";
 
     foreach($components as $component){
-        $fileString = var_export($component->absolutePath, TRUE);
+        $fileString = var_export($component, TRUE);
         $staticInclusionsSource .= "require __DIR__ . " . $fileString . ";\n";
     }
 

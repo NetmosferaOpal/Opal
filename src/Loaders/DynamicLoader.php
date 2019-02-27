@@ -4,14 +4,12 @@ namespace Netmosfera\Opal\Loaders;
 
 use Closure;
 use Error;
-use Netmosfera\Opal\PackageDirectory;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
 use function Netmosfera\Opal\InternalTools\dirEmpty;
 use function Netmosfera\Opal\InternalTools\dirLock;
 use function Netmosfera\Opal\InternalTools\preprocessComponent;
 use function Netmosfera\Opal\InternalTools\preprocessStaticComponents;
 use function spl_autoload_register;
-use function spl_autoload_unregister;
 
 class DynamicLoader implements Loader
 {
@@ -20,66 +18,58 @@ class DynamicLoader implements Loader
     private const ENDED = 2;
 
     /** @var Int */ private $_state;
-    /** @var PackageDirectory[] */ private $_directories;
-    /** @var Closure[] */ private $_preprocessors;
-    /** @var String */ private $_compileDirectory;
-    /** @var Int|NULL */ private $_compileDirectoryPermissions;
-    /** @var Int|NULL */ private $_compileFilePermissions;
+    /** @var String|NULL */ private $_compileDirectory;
     /** @var Closure|NULL */ private $_autoloader;
-    /** @var Resource|NULL */ private $_lockHandle;
+    /** @var Resource|NULL */ private $_lock;
 
-    public function __construct(
+    public function __construct(){
+        $this->_state = self::NOT_STARTED;
+        $this->_compileDirectory = NULL;
+        $this->_autoloader = NULL;
+        $this->_lock = NULL;
+    }
+
+    public function start(
         Array $directories,
         Array $preprocessors,
         String $compileDirectory,
-        ?Int $compileDirectoryPermissions,
-        ?Int $compileFilePermissions
+        Int $compileDirectoryPermissions,
+        Int $compileFilePermissions
     ){
-        $this->_state = self::NOT_STARTED;
-        $this->_directories = $directories;
-        $this->_preprocessors = $preprocessors;
-        $this->_compileDirectory = $compileDirectory;
-        $this->_compileDirectoryPermissions = $compileDirectoryPermissions;
-        $this->_compileFilePermissions = $compileFilePermissions;
-        $this->_autoloader = NULL;
-        $this->_lockHandle = NULL;
-    }
-
-    public function start(){
         if($this->_state !== self::NOT_STARTED) throw new Error("Not NOT_STARTED");
 
-        $this->_lockHandle = dirLock($this->_compileDirectory);
+        $this->_lock = dirLock($compileDirectory, $compileDirectoryPermissions);
 
         $this->_state = self::STARTED;
 
-        $this->_autoloader = function(String $typeName){
+        $this->_compileDirectory = $compileDirectory;
+
+        $this->_autoloader = function(String $typeName) use(
+            $directories, $preprocessors,
+            $compileDirectoryPermissions, $compileFilePermissions
+        ){
             $component = componentFromTypeName($typeName);
             if($component === NULL) return NULL;
-            $directory = $this->_directories[$component->package->id] ?? NULL;
+            $directory = $directories[$component->package->id] ?? NULL;
             if($directory === NULL) return NULL;
             preprocessComponent(
-                $directory, $component, $this->_preprocessors, $this->_compileDirectory,
-                TRUE, $this->_compileDirectoryPermissions, $this->_compileFilePermissions
+                $directory, $component, $preprocessors, $this->_compileDirectory,
+                TRUE, $compileDirectoryPermissions, $compileFilePermissions
             );
         };
 
         spl_autoload_register($this->_autoloader, TRUE, FALSE);
 
         preprocessStaticComponents(
-            $this->_directories, $this->_preprocessors, $this->_compileDirectory, TRUE,
-            $this->_compileDirectoryPermissions, $this->_compileFilePermissions
+            $directories, $preprocessors, $compileDirectory, TRUE,
+            $compileDirectoryPermissions, $compileFilePermissions
         );
     }
 
-    public function end(){
-        if($this->_state !== self::STARTED) throw new Error("Not STARTED");
-        spl_autoload_unregister($this->_autoloader);
-        dirEmpty($this->_compileDirectory);
-        fclose($this->_lockHandle);
-        $this->_state = self::ENDED;
-    }
-
     public function __destruct(){
-        if($this->_state === self::STARTED) $this->end();
+        if($this->_state !== self::STARTED) return;
+        dirEmpty($this->_compileDirectory);
+        fclose($this->_lock);
+        $this->_state = self::ENDED;
     }
 }

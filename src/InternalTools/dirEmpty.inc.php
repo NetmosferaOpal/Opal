@@ -17,6 +17,7 @@ function dirEmpty(String $directory){
 
     foreach($flattenedDirectoryIterator as $fileInfo){
         /** @var SplFileInfo $fileInfo */
+        if($fileInfo->getFilename() === "opal.lock") continue;
         $file = $fileInfo->getPathname();
         is_dir($file) ? rmdir($file) : unlink($file);
     }
