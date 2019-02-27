@@ -3,10 +3,10 @@
 namespace Netmosfera\OpalTests;
 
 use Netmosfera\Opal\Package;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 use PHPUnit\Framework\TestCase;
 
-class PackageDirectoryTest extends TestCase
+class PackagePathTest extends TestCase
 {
     public function data(){
         foreach(["\\", "/"] as $s){
@@ -22,7 +22,7 @@ class PackageDirectoryTest extends TestCase
     /** @dataProvider data */
     public function test(String $input, String $expect, Int $length){
         $package = new Package("StarkIndustries", "MarkLI");
-        $d = new PackageDirectory($package, $input);
+        $d = new PackagePath($package, $input);
         self::assertSame($package, $d->package);
         self::assertSame($expect, $d->path);
         self::assertSame($length, $d->pathLength);

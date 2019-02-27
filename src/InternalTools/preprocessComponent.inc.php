@@ -4,14 +4,14 @@ namespace Netmosfera\Opal\InternalTools;
 
 use Closure;
 use Netmosfera\Opal\PackageComponent;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 use PhpParser\ParserFactory as PF;
 use PhpParser\PrettyPrinter\Standard;
 use function chmod;
 use function umask;
 
 function preprocessComponent(
-    PackageDirectory $directory,
+    PackagePath $directory,
     PackageComponent $component,
     Array $preprocessors,
     String $compileDirectory,
@@ -43,7 +43,9 @@ function preprocessComponent(
     chmod($destinationFile, $filePermissions ?? 0644);
 
     if($executeIt){
-        (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($destinationFile);
+        (function($__OPAL_FILE__){
+            require $__OPAL_FILE__;
+        })($destinationFile);
     }
 
     umask($saveUMask);

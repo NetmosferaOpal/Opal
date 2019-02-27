@@ -2,11 +2,9 @@
 
 namespace Netmosfera\OpalTests\InternalTools;
 
-use function fileperms;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
-use Netmosfera\Opal\PackageDirectory;
-use const PHP_OS;
+use Netmosfera\Opal\PackagePath;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Echo_;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +23,7 @@ class preprocessComponentTest extends TestCase
     public function test(Bool $executeIt){
         try{
             $p = new Package("StarkIndustries", "HulkBuster");
-            $d = new PackageDirectory($p, __DIR__ . "/origin");
+            $d = new PackagePath($p, __DIR__ . "/origin");
             $c = new PackageComponent($p, ["Foo", "Bar", "Baz"], ".php");
             $compileDirectoryPath = __DIR__ . "/destination";
             $originPath = $d->path . $c->relativeToPackagePath;

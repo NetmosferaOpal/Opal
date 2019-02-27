@@ -5,7 +5,7 @@ namespace Netmosfera\OpalTests;
 use Netmosfera\Opal\DynamicLoader;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Echo_;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +37,7 @@ class DynamicLoaderTest extends TestCase
             }];
 
             $package = new Package($vendorName, $packageName);
-            $directory = new PackageDirectory($package, __DIR__ . "/origin");
+            $directory = new PackagePath($package, __DIR__ . "/origin");
             $directories = [$package->id => $directory];
             $compileDirectory = __DIR__ . "/destination";
             $loader = new DynamicLoader();

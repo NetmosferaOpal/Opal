@@ -3,11 +3,11 @@
 namespace Netmosfera\OpalTests\InternalTools;
 
 use Netmosfera\Opal\Package;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 use PHPUnit\Framework\TestCase;
-use function Netmosfera\Opal\InternalTools\pathBelongsToPackageDirectory;
+use function Netmosfera\Opal\InternalTools\pathBelongsToPackagePath;
 
-class pathBelongsToPackageDirectoryTest extends TestCase
+class pathBelongsToPackagePathTest extends TestCase
 {
     public function data1(){
         // different prefix
@@ -35,7 +35,7 @@ class pathBelongsToPackageDirectoryTest extends TestCase
     /** @dataProvider data1 */
     public function test1(String $directory, String $path, Bool $result){
         $package = new Package("StarkIndustries", "IronManSuit");
-        $directory = new PackageDirectory($package, $directory);
-        self::assertSame($result, pathBelongsToPackageDirectory($path, $directory));
+        $directory = new PackagePath($package, $directory);
+        self::assertSame($result, pathBelongsToPackagePath($path, $directory));
     }
 }

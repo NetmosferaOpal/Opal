@@ -19,6 +19,7 @@ use function Netmosfera\Opal\InternalTools\isValidIdentifiers;
 class PackageComponent
 {
     /** @var Package */ public $package;
+
     /** @var String[] */ public $identifiers;
 
     /**

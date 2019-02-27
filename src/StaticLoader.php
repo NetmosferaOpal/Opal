@@ -3,7 +3,6 @@
 namespace Netmosfera\Opal;
 
 use Closure;
-use Error;
 use const DIRECTORY_SEPARATOR as DS;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
 use function spl_autoload_register;
@@ -25,26 +24,31 @@ class StaticLoader implements Loader
         Int $compileDirectoryPermissions,
         Int $compileFilePermissions
     ){
-        if($this->_started){
-            throw new Error("Already started");
-        }
+        assert(!$this->_started);
         $this->_started = TRUE;
 
         $this->_autoloader = function(String $typeName) use(
             $directories, $compileDirectory
         ){
             $component = componentFromTypeName($typeName);
-            if($component === NULL) return NULL;
+            if($component === NULL){
+                return NULL;
+            }
+
             $directory = $directories[$component->package->id] ?? NULL;
-            if($directory === NULL) return NULL;
-            $file = $compileDirectory . $component->absolutePath;
-            (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($file);
+            if($directory === NULL){
+                return NULL;
+            }
+
+            (static function($__OPAL_FILE__){
+                require $__OPAL_FILE__;
+            })($compileDirectory . $component->absolutePath);
         };
 
         spl_autoload_register($this->_autoloader, TRUE, FALSE);
 
-        $staticInclusionsFile = $compileDirectory . DS . "static-inclusions.php";
-
-        (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($staticInclusionsFile);
+        (static function($__OPAL_FILE__){
+            require $__OPAL_FILE__;
+        })($compileDirectory . DS . "static-inclusions.php");
     }
 }

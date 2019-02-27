@@ -3,7 +3,7 @@
 namespace Netmosfera\Opal\InternalTools;
 
 use Netmosfera\Opal\PackageComponent;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 
 /**
  * Creates a {@see PackageComponent} from a local file path.
@@ -15,11 +15,11 @@ use Netmosfera\Opal\PackageDirectory;
  * {@see PackageComponent::$extension}. If all file-names in the path are valid PHP
  * identifiers a {@see PackageComponent} object is returned, otherwise `NULL`.
  */
-function componentFromPath(PackageDirectory $directory, String $path): ?PackageComponent{
+function componentFromPath(PackagePath $packagePath, String $path): ?PackageComponent{
+    assert(pathBelongsToPackagePath($path, $packagePath));
     assert(isNormalizedPath($path));
-    assert(pathBelongsToPackageDirectory($path, $directory));
 
-    $relativePath = substr($path, $directory->pathLength);
+    $relativePath = substr($path, $packagePath->pathLength);
 
     $identifiers = preg_split("@[\\\\/]+@", $relativePath);
     // Remove the first because the relative path starts with a
@@ -43,5 +43,5 @@ function componentFromPath(PackageDirectory $directory, String $path): ?PackageC
         }
     }
 
-    return new PackageComponent($directory->package, $identifiers, $extension);
+    return new PackageComponent($packagePath->package, $identifiers, $extension);
 }

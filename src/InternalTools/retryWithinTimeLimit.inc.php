@@ -32,11 +32,14 @@ function retryWithinTimeLimit(
 
     while($function() === FALSE){
         $elapsedTimeSoFar = microtime(TRUE) - $startTime;
+
         $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsBeforeRetry;
+
         $willExceedTimeLimit = $nextElapsedTimePrediction > $secondsLimit;
         if($willExceedTimeLimit){
             return FALSE;
         }
+
         usleep((Int)($secondsBeforeRetry * 1000000));
     }
 

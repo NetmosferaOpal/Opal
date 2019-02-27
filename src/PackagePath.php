@@ -6,7 +6,7 @@ use function Netmosfera\Opal\InternalTools\isNormalizedPath;
 /**
  * Local directory in which a {@see Package} can be found.
  */
-class PackageDirectory
+class PackagePath
 {
     /** @var Package */ public $package;
 

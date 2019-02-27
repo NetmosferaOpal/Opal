@@ -14,12 +14,17 @@ use function spl_autoload_register;
 class DynamicLoader implements Loader
 {
     private const NOT_STARTED = 0;
+
     private const STARTED = 1;
+
     private const ENDED = 2;
 
     /** @var Int */ private $_state;
+
     /** @var String|NULL */ private $_compileDirectory;
+
     /** @var Closure|NULL */ private $_autoloader;
+
     /** @var Resource|NULL */ private $_lock;
 
     public function __construct(){
@@ -73,12 +78,10 @@ class DynamicLoader implements Loader
     }
 
     public function __destruct(){
-        if($this->_state !== self::STARTED){
-            return;
+        if($this->_state === self::STARTED){
+            dirEmpty($this->_compileDirectory);
+            fclose($this->_lock);
+            $this->_state = self::ENDED;
         }
-
-        dirEmpty($this->_compileDirectory);
-        fclose($this->_lock);
-        $this->_state = self::ENDED;
     }
 }

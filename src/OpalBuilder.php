@@ -4,40 +4,36 @@ namespace Netmosfera\Opal;
 
 use Closure;
 use Error;
-use function spl_object_hash;
+use function spl_object_id;
 
 class OpalBuilder
 {
     /** @var Int */ private $_started;
-    /** @var PackageDirectory[] */ private $_directories;
+    /** @var PackagePath[] */ private $_paths;
     /** @var Closure[] */ private $_preprocessors;
     /** @var Loader */ private $_loader;
 
     public function __construct(Loader $loader){
         $this->_started = FALSE;
-        $this->_directories = [];
+        $this->_paths = [];
         $this->_preprocessors = [];
         $this->_loader = $loader;
     }
 
-    public function addPackage(
-        String $vendorName,
-        String $packageName,
-        String $pathToPackage
-    ){
-        if($this->_started){
-            throw new Error("Cannot modify Opal after it is started");
-        }
-        $package = new Package($vendorName, $packageName);
-        $directory = new PackageDirectory($package, $pathToPackage);
-        $this->_directories[$directory->package->id] = $directory;
+    public function addPackage(PackagePath $packagePath){
+        assert(!$this->_started, new Error("Cannot modify Opal after it is started"));
+
+        $key = $packagePath->package->id;
+
+        assert(!isset($this->_paths[$key]), new Error("This package exists already"));
+
+        $this->_paths[$key] = $packagePath;
     }
 
     public function addPreprocessor(Closure $preprocessor){
-        if($this->_started){
-            throw new Error("Cannot modify Opal after it is started");
-        }
-        $identifier = spl_object_hash($preprocessor);
+        assert(!$this->_started, new Error("Cannot modify Opal after it is started"));
+
+        $identifier = spl_object_id($preprocessor);
         $this->_preprocessors[$identifier] = $preprocessor;
     }
 
@@ -46,13 +42,11 @@ class OpalBuilder
         Int $compileDirectoryPermissions = 0755,
         Int $compileFilePermissions = 0644
     ){
-        if($this->_started){
-            throw new Error("Opal is already running");
-        }
+        assert(!$this->_started, new Error("Opal is already running"));
         $this->_started = TRUE;
 
         $this->_loader->start(
-            $this->_directories, $this->_preprocessors,
+            $this->_paths, $this->_preprocessors,
             $compileDirectory, $compileDirectoryPermissions, $compileFilePermissions
         );
     }

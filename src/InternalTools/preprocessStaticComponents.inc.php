@@ -3,11 +3,11 @@
 namespace Netmosfera\Opal\InternalTools;
 
 use Netmosfera\Opal\PackageComponent;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 use const DIRECTORY_SEPARATOR as DS;
 
 function preprocessStaticComponents(
-    Array $directories,
+    Array $packagePaths,
     Array $preprocessors,
     String $compileDirectory,
     Bool $executeIt,
@@ -19,13 +19,13 @@ function preprocessStaticComponents(
     $components = [];
     /** @var PackageComponent[] $components */
 
-    foreach($directories as $directory){
-        assert($directory instanceof PackageDirectory);
-        foreach(dirReadRecursive($directory->path) as $filePath){
-            $component = componentFromPath($directory, $filePath);
+    foreach($packagePaths as $packagePath){
+        assert($packagePath instanceof PackagePath);
+        foreach(dirReadRecursive($packagePath->path) as $filePath){
+            $component = componentFromPath($packagePath, $filePath);
             if($component !== NULL && $component->extension === ".inc.php"){
                 preprocessComponent(
-                    $directory, $component, $preprocessors, $compileDirectory,
+                    $packagePath, $component, $preprocessors, $compileDirectory,
                     FALSE, $directoryPermissions, $filePermissions
                 );
                 $components[] = $component->absolutePath;
@@ -48,6 +48,8 @@ function preprocessStaticComponents(
     file_put_contents($destinationFile, $staticInclusionsSource);
 
     if($executeIt){
-        (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($destinationFile);
+        (function($__OPAL_FILE__){
+            require $__OPAL_FILE__;
+        })($destinationFile);
     }
 }

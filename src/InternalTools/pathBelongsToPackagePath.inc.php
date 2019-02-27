@@ -2,9 +2,9 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 
-function pathBelongsToPackageDirectory(String $path, PackageDirectory $directory): Bool{
+function pathBelongsToPackagePath(String $path, PackagePath $directory): Bool{
     return
         substr($path, 0, $directory->pathLength) === $directory->path &&
         ($path[$directory->pathLength] === "/" || $path[$directory->pathLength] === "\\");

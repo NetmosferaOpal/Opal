@@ -4,7 +4,7 @@ namespace Netmosfera\OpalTests;
 
 use Netmosfera\Opal\StaticLoader;
 use Netmosfera\Opal\Package;
-use Netmosfera\Opal\PackageDirectory;
+use Netmosfera\Opal\PackagePath;
 use PHPUnit\Framework\TestCase;
 use function ob_get_clean;
 use function ob_start;
@@ -26,7 +26,7 @@ class StaticLoaderTest extends TestCase
             );
 
             $package = new Package($vendorName, $packageName);
-            $directory = new PackageDirectory($package, "/irrelevant");
+            $directory = new PackagePath($package, "/irrelevant");
             $loader = new StaticLoader();
 
             ob_start();

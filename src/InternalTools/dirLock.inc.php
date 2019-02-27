@@ -6,6 +6,7 @@ use const DIRECTORY_SEPARATOR as DS;
 use function umask;
 
 class LockTimeout{}
+
 class NonEmptyDirectory{}
 
 function dirLock(
@@ -33,7 +34,9 @@ function dirLock(
         return $locked = flock($lock, LOCK_EX | LOCK_NB);
     }, (Float)$timeout, 0.0);
 
-    if(!$locked) return new LockTimeout();
+    if(!$locked){
+        return new LockTimeout();
+    }
 
     /** @var Resource $lock */
 
