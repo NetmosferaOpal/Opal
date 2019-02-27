@@ -29,7 +29,7 @@ class PackageComponent
      * unless the file had no extension - in that case this property is set to a empty
      * string.
      */
-    /** @var String */ public $extension;
+    /** @var String */ public $extensions;
 
     /**
      * For example, if the component is `StarkIndustries/IronMan/Weapons/Minigun.php`
@@ -46,23 +46,21 @@ class PackageComponent
     public function __construct(
         Package $package,
         array $identifiers,
-        String $extension = ".php"
+        String $extensions = ".php"
     ){
         // Intentionally checked with assert(); this way the overhead
         // is reduced to the bare minimum in production.
         assert(isValidIdentifiers($identifiers));
-        assert($extension === "" || substr($extension, 0, 1) === ".");
+        assert($extensions === "" || substr($extensions, 0, 1) === ".");
 
         $this->package = $package;
         $this->identifiers = $identifiers;
-        $this->extension = $extension;
-
-        $prefix = "/" . $package->vendorIdentifier . "/" . $package->packageIdentifier;
+        $this->extensions = $extensions;
 
         $stringifiedIdentifiers = "/" . implode("/", $identifiers);
+        $this->relativeToPackagePath = $stringifiedIdentifiers . $extensions;
 
-        $this->relativeToPackagePath = $stringifiedIdentifiers . $extension;
-
+        $prefix = "/" . $package->vendorIdentifier . "/" . $package->packageIdentifier;
         $this->absolutePath = $prefix . $this->relativeToPackagePath;
     }
 }

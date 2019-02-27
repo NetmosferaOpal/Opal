@@ -2,16 +2,16 @@
 
 namespace Netmosfera\OpalTests\InternalTools;
 
-use function Netmosfera\Opal\InternalTools\dirLock;
+use function Netmosfera\Opal\InternalTools\lockDirectory;
 use Netmosfera\Opal\InternalTools\LockTimeout;
 use Netmosfera\Opal\InternalTools\NonEmptyDirectory;
 use PHPUnit\Framework\TestCase;
 
-class dirLockTest extends TestCase
+class lockDirectoryTest extends TestCase
 {
     public function test_acquires_lock(){
         try{
-            $handle = dirLock(__DIR__ . "/foo", 0777, 30);
+            $handle = lockDirectory(__DIR__ . "/foo", 0777, 30);
             self::assertTrue(file_exists(__DIR__ . "/foo/opal.lock"));
             self::assertTrue(is_resource($handle));
             fclose($handle);
@@ -23,8 +23,8 @@ class dirLockTest extends TestCase
 
     public function test_denies_concurrent_lock(){
         try{
-            $handle = dirLock(__DIR__ . "/foo", 0777, 30);
-            self::assertInstanceOf(LockTimeout::CLASS, dirLock(__DIR__ . "/foo", 0777, 1));
+            $handle = lockDirectory(__DIR__ . "/foo", 0777, 30);
+            self::assertInstanceOf(LockTimeout::CLASS, lockDirectory(__DIR__ . "/foo", 0777, 1));
             fclose($handle);
         }finally{
             @unlink(__DIR__ . "/foo/opal.lock");
@@ -36,7 +36,7 @@ class dirLockTest extends TestCase
         try{
             mkdir(__DIR__ . "/foo");
             file_put_contents(__DIR__ . "/foo/baz.txt", "");
-            self::assertInstanceOf(NonEmptyDirectory::CLASS, dirLock(__DIR__ . "/foo", 0777, 1));
+            self::assertInstanceOf(NonEmptyDirectory::CLASS, lockDirectory(__DIR__ . "/foo", 0777, 1));
         }finally{
             @unlink(__DIR__ . "/foo/opal.lock");
             @unlink(__DIR__ . "/foo/baz.txt");

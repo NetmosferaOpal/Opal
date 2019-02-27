@@ -14,7 +14,7 @@ class PackageComponentTest extends TestCase
         $c = new PackageComponent($package, $identifiers, ".php");
         self::assertSame($package, $c->package);
         self::assertSame($identifiers, $c->identifiers);
-        self::assertSame(".php", $c->extension);
+        self::assertSame(".php", $c->extensions);
         self::assertSame("/Weapons/Minigun.php", $c->relativeToPackagePath);
         self::assertSame("/StarkIndustries/MarkLI/Weapons/Minigun.php", $c->absolutePath);
     }

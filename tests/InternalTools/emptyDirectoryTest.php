@@ -3,9 +3,9 @@
 namespace Netmosfera\OpalTests\InternalTools;
 
 use PHPUnit\Framework\TestCase;
-use function Netmosfera\Opal\InternalTools\dirEmpty;
+use function Netmosfera\Opal\InternalTools\emptyDirectory;
 
-class dirEmptyTest extends TestCase
+class emptyDirectoryTest extends TestCase
 {
     public function test(){
         try{
@@ -30,7 +30,7 @@ class dirEmptyTest extends TestCase
                 }
             }
 
-            dirEmpty($bd);
+            emptyDirectory($bd);
 
             self:self::assertSame([], glob($bd . "/*"));
 

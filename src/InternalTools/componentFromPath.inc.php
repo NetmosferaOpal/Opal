@@ -16,7 +16,7 @@ use Netmosfera\Opal\PackagePath;
  * identifiers a {@see PackageComponent} object is returned, otherwise `NULL`.
  */
 function componentFromPath(PackagePath $packagePath, String $path): ?PackageComponent{
-    assert(pathBelongsToPackagePath($path, $packagePath));
+    assert(isPathInPackage($path, $packagePath));
     assert(isNormalizedPath($path));
 
     $relativePath = substr($path, $packagePath->pathLength);
@@ -24,14 +24,15 @@ function componentFromPath(PackagePath $packagePath, String $path): ?PackageComp
     $identifiers = preg_split("@[\\\\/]+@", $relativePath);
     // Remove the first because the relative path starts with a
     // directory separator, therefore the first is empty
-    array_shift($identifiers);
+    $firstPathPiece = array_shift($identifiers);
+    assert($firstPathPiece === "");
 
     $fileName = $identifiers[count($identifiers) - 1];
     $fileNamePieces = explode(".", $fileName, 2);
 
     $componentIdentifier = $fileNamePieces[0];
-    $extension = $fileNamePieces[1] ?? NULL;
-    $extension = $extension === NULL ? "" : "." . $extension;
+    $extensions = $fileNamePieces[1] ?? NULL;
+    $extensions = $extensions === NULL ? "" : "." . $extensions;
 
     $identifiers[count($identifiers) - 1] = $componentIdentifier;
 
@@ -43,5 +44,5 @@ function componentFromPath(PackagePath $packagePath, String $path): ?PackageComp
         }
     }
 
-    return new PackageComponent($packagePath->package, $identifiers, $extension);
+    return new PackageComponent($packagePath->package, $identifiers, $extensions);
 }

@@ -9,7 +9,7 @@ class LockTimeout{}
 
 class NonEmptyDirectory{}
 
-function dirLock(
+function lockDirectory(
     String $directory,
     ?Int $directoryPermissions,
     Int $timeout = 30

@@ -6,11 +6,11 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
-function dirEmpty(String $directory): void{
-    assert(isNormalizedPath($directory));
+function emptyDirectory(String $path): void{
+    assert(isNormalizedPath($path));
 
     $flags = RecursiveDirectoryIterator::SKIP_DOTS;
-    $directoryIterator = new RecursiveDirectoryIterator($directory, $flags);
+    $directoryIterator = new RecursiveDirectoryIterator($path, $flags);
 
     $flags = RecursiveIteratorIterator::CHILD_FIRST;
     $flatDirectoryIterator = new RecursiveIteratorIterator($directoryIterator, $flags);

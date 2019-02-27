@@ -5,9 +5,9 @@ namespace Netmosfera\OpalTests\InternalTools;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackagePath;
 use PHPUnit\Framework\TestCase;
-use function Netmosfera\Opal\InternalTools\pathBelongsToPackagePath;
+use function Netmosfera\Opal\InternalTools\isPathInPackage;
 
-class pathBelongsToPackagePathTest extends TestCase
+class isPathInPackageTest extends TestCase
 {
     public function data1(){
         // different prefix
@@ -36,6 +36,6 @@ class pathBelongsToPackagePathTest extends TestCase
     public function test1(String $directory, String $path, Bool $result){
         $package = new Package("StarkIndustries", "IronManSuit");
         $directory = new PackagePath($package, $directory);
-        self::assertSame($result, pathBelongsToPackagePath($path, $directory));
+        self::assertSame($result, isPathInPackage($path, $directory));
     }
 }

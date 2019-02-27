@@ -11,8 +11,8 @@ use function chmod;
 use function umask;
 
 function preprocessComponent(
-    PackagePath $directory,
-    PackageComponent $component,
+    PackagePath $packagePath,
+    PackageComponent $packageComponent,
     Array $preprocessors,
     String $compileDirectory,
     Bool $executeIt,
@@ -21,19 +21,19 @@ function preprocessComponent(
 ){
     assert(isNormalizedPath($compileDirectory));
 
-    $originFile = $directory->path . $component->relativeToPackagePath;
+    $originFile = $packagePath->path . $packageComponent->relativeToPackagePath;
 
     $source = file_get_contents($originFile);
     if($preprocessors !== []){
         $nodes = (new PF())->create(PF::ONLY_PHP7)->parse($source);
         foreach($preprocessors as $preprocessor){
             assert($preprocessor instanceof Closure);
-            $nodes = $preprocessor($component, $nodes);
+            $nodes = $preprocessor($packageComponent, $nodes);
         }
         $source = (new Standard())->prettyPrintFile($nodes);
     }
 
-    $destinationFile = $compileDirectory . $component->absolutePath;
+    $destinationFile = $compileDirectory . $packageComponent->absolutePath;
 
     $saveUMask = umask(0);
 

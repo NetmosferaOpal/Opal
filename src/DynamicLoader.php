@@ -5,8 +5,8 @@ namespace Netmosfera\Opal;
 use Closure;
 use Error;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
-use function Netmosfera\Opal\InternalTools\dirEmpty;
-use function Netmosfera\Opal\InternalTools\dirLock;
+use function Netmosfera\Opal\InternalTools\emptyDirectory;
+use function Netmosfera\Opal\InternalTools\lockDirectory;
 use function Netmosfera\Opal\InternalTools\preprocessComponent;
 use function Netmosfera\Opal\InternalTools\preprocessStaticComponents;
 use function spl_autoload_register;
@@ -43,7 +43,7 @@ class DynamicLoader implements Loader
     ){
         if($this->_state !== self::NOT_STARTED) throw new Error("Not NOT_STARTED");
 
-        $this->_lock = dirLock($compileDirectory, $compileDirectoryPermissions); // @TODO this doesn't throw anymore
+        $this->_lock = lockDirectory($compileDirectory, $compileDirectoryPermissions); // @TODO this doesn't throw anymore
 
         $this->_state = self::STARTED;
 
@@ -79,7 +79,7 @@ class DynamicLoader implements Loader
 
     public function __destruct(){
         if($this->_state === self::STARTED){
-            dirEmpty($this->_compileDirectory);
+            emptyDirectory($this->_compileDirectory);
             fclose($this->_lock);
             $this->_state = self::ENDED;
         }

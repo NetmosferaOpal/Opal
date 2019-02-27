@@ -21,9 +21,9 @@ function preprocessStaticComponents(
 
     foreach($packagePaths as $packagePath){
         assert($packagePath instanceof PackagePath);
-        foreach(dirReadRecursive($packagePath->path) as $filePath){
+        foreach(readDirectory($packagePath->path) as $filePath){
             $component = componentFromPath($packagePath, $filePath);
-            if($component !== NULL && $component->extension === ".inc.php"){
+            if($component !== NULL && $component->extensions === ".inc.php"){
                 preprocessComponent(
                     $packagePath, $component, $preprocessors, $compileDirectory,
                     FALSE, $directoryPermissions, $filePermissions

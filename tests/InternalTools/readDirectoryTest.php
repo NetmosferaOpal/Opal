@@ -5,11 +5,11 @@ namespace Netmosfera\OpalTests\InternalTools;
 use PHPUnit\Framework\TestCase;
 use const DIRECTORY_SEPARATOR as DS;
 use const SORT_STRING;
-use function Netmosfera\Opal\InternalTools\dirReadRecursive;
+use function Netmosfera\Opal\InternalTools\readDirectory;
 use function random_bytes;
 use function rmdir;
 
-class dirReadRecursiveTest extends TestCase
+class readDirectoryTest extends TestCase
 {
     public function test_lots_of_files(){
         $bd = __DIR__ . DS . "temp_directory";
@@ -54,7 +54,7 @@ class dirReadRecursiveTest extends TestCase
             }
         }
 
-        $actualFiles = dirReadRecursive($bd);
+        $actualFiles = readDirectory($bd);
 
         sort($files, SORT_STRING);
         sort($actualFiles, SORT_STRING);
