@@ -49,9 +49,15 @@ class DynamicLoader implements Loader
             $compileDirectoryPermissions, $compileFilePermissions
         ){
             $component = componentFromTypeName($typeName);
-            if($component === NULL) return NULL;
+            if($component === NULL){
+                return NULL;
+            }
+
             $directory = $directories[$component->package->id] ?? NULL;
-            if($directory === NULL) return NULL;
+            if($directory === NULL){
+                return NULL;
+            }
+
             preprocessComponent(
                 $directory, $component, $preprocessors, $this->_compileDirectory,
                 TRUE, $compileDirectoryPermissions, $compileFilePermissions
@@ -67,7 +73,10 @@ class DynamicLoader implements Loader
     }
 
     public function __destruct(){
-        if($this->_state !== self::STARTED) return;
+        if($this->_state !== self::STARTED){
+            return;
+        }
+
         dirEmpty($this->_compileDirectory);
         fclose($this->_lock);
         $this->_state = self::ENDED;

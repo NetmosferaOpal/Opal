@@ -19,27 +19,30 @@ function dirLock(
 
     $lockFilePath = $directory . DS . "opal.lock";
     $locked = retryWithinTimeLimit(function() use(
-        &$lockHandle, &$lockFilePath, &$directory, &$directoryPermissions
+        &$lock, &$lockFilePath, &$directory, &$directoryPermissions
     ){
         $saveUMask = umask(0);
         @mkdir($directory, $directoryPermissions, TRUE);
-        $lockHandle = @fopen($lockFilePath, "c");
+        $lock = @fopen($lockFilePath, "c");
         umask($saveUMask);
-        if($lockHandle === FALSE) return FALSE;
-        $locked = flock($lockHandle, LOCK_EX | LOCK_NB);
-        return $locked;
+
+        if($lock === FALSE){
+            return FALSE;
+        }
+
+        return $locked = flock($lock, LOCK_EX | LOCK_NB);
     }, (Float)$timeout, 0.0);
 
     if(!$locked) return new LockTimeout();
 
-    /** @var Resource $lockHandle */
+    /** @var Resource $lock */
 
     $actualContents = glob($directory . DS . "*");
     $isDirectoryNotEmpty = $actualContents !== [$lockFilePath];
     if($isDirectoryNotEmpty){
-        fclose($lockHandle);
+        fclose($lock);
         return new NonEmptyDirectory();
     }
 
-    return $lockHandle;
+    return $lock;
 }

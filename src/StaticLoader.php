@@ -25,7 +25,9 @@ class StaticLoader implements Loader
         Int $compileDirectoryPermissions,
         Int $compileFilePermissions
     ){
-        if($this->_started) throw new Error("Already started");
+        if($this->_started){
+            throw new Error("Already started");
+        }
         $this->_started = TRUE;
 
         $this->_autoloader = function(String $typeName) use(
@@ -35,11 +37,14 @@ class StaticLoader implements Loader
             if($component === NULL) return NULL;
             $directory = $directories[$component->package->id] ?? NULL;
             if($directory === NULL) return NULL;
-            require $compileDirectory . $component->absolutePath; // @TODO clean scope
+            $file = $compileDirectory . $component->absolutePath;
+            (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($file);
         };
 
         spl_autoload_register($this->_autoloader, TRUE, FALSE);
 
-        require $compileDirectory . DS . "static-inclusions.php";
+        $staticInclusionsFile = $compileDirectory . DS . "static-inclusions.php";
+
+        (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($staticInclusionsFile);
     }
 }

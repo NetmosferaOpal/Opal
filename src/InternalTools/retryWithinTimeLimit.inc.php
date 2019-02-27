@@ -5,7 +5,7 @@ namespace Netmosfera\Opal\InternalTools;
 use Closure;
 
 /**
- * @TODOC
+ * Executes a function until it succeeds.
  *
  * @param           Closure $function
  *
@@ -34,7 +34,9 @@ function retryWithinTimeLimit(
         $elapsedTimeSoFar = microtime(TRUE) - $startTime;
         $nextElapsedTimePrediction = $elapsedTimeSoFar + $secondsBeforeRetry;
         $willExceedTimeLimit = $nextElapsedTimePrediction > $secondsLimit;
-        if($willExceedTimeLimit){ return FALSE; }
+        if($willExceedTimeLimit){
+            return FALSE;
+        }
         usleep((Int)($secondsBeforeRetry * 1000000));
     }
 

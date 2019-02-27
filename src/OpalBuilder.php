@@ -25,14 +25,18 @@ class OpalBuilder
         String $packageName,
         String $pathToPackage
     ){
-        if($this->_started) throw new Error("Cannot modify Opal after it is started");
+        if($this->_started){
+            throw new Error("Cannot modify Opal after it is started");
+        }
         $package = new Package($vendorName, $packageName);
         $directory = new PackageDirectory($package, $pathToPackage);
         $this->_directories[$directory->package->id] = $directory;
     }
 
     public function addPreprocessor(Closure $preprocessor){
-        if($this->_started) throw new Error("Cannot modify Opal after it is started");
+        if($this->_started){
+            throw new Error("Cannot modify Opal after it is started");
+        }
         $identifier = spl_object_hash($preprocessor);
         $this->_preprocessors[$identifier] = $preprocessor;
     }
@@ -42,7 +46,9 @@ class OpalBuilder
         Int $compileDirectoryPermissions = 0755,
         Int $compileFilePermissions = 0644
     ){
-        if($this->_started) throw new Error("Opal is already running");
+        if($this->_started){
+            throw new Error("Opal is already running");
+        }
         $this->_started = TRUE;
 
         $this->_loader->start(

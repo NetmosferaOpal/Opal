@@ -13,9 +13,9 @@ function dirEmpty(String $directory): void{
     $directoryIterator = new RecursiveDirectoryIterator($directory, $flags);
 
     $flags = RecursiveIteratorIterator::CHILD_FIRST;
-    $flattenedDirectoryIterator = new RecursiveIteratorIterator($directoryIterator, $flags);
+    $flatDirectoryIterator = new RecursiveIteratorIterator($directoryIterator, $flags);
 
-    foreach($flattenedDirectoryIterator as $fileInfo){
+    foreach($flatDirectoryIterator as $fileInfo){
         /** @var SplFileInfo $fileInfo */
         if($fileInfo->getFilename() === "opal.lock") continue;
         $file = $fileInfo->getPathname();

@@ -18,7 +18,10 @@ class PerPackagePreprocessorManager
         $this->_filteringPreprocessor = function(
             PackageComponent $component, Array $nodes
         ): array{
-            if(isset($this->_packages[$component->package->id]) === FALSE) return $nodes;
+            if(isset($this->_packages[$component->package->id]) === FALSE){
+                return $nodes;
+            }
+
             return ($this->_actualPreprocessor)($component, $nodes);
         };
     }

@@ -36,9 +36,15 @@ function preprocessComponent(
     $destinationFile = $compileDirectory . $component->absolutePath;
 
     $saveUMask = umask(0);
+
     @mkdir(dirname($destinationFile), $directoryPermissions ?? 0755, TRUE);
+
     file_put_contents($destinationFile, $source);
     chmod($destinationFile, $filePermissions ?? 0644);
-    if($executeIt) require $destinationFile; // @TODO clean scope
+
+    if($executeIt){
+        (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($destinationFile);
+    }
+
     umask($saveUMask);
 }

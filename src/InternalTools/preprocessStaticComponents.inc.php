@@ -47,5 +47,7 @@ function preprocessStaticComponents(
 
     file_put_contents($destinationFile, $staticInclusionsSource);
 
-    if($executeIt) require $destinationFile; // @TODO clean scope in file
+    if($executeIt){
+        (function($__OPAL_FILE__){ require $__OPAL_FILE__; })($destinationFile);
+    }
 }

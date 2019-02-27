@@ -9,10 +9,12 @@ function isValidIdentifiers(array $identifiers): Bool{
     if(count($identifiers) < 1){
         return FALSE;
     }
+
     foreach($identifiers as $identifier){
         if(isValidIdentifier($identifier) === FALSE){
             return FALSE;
         }
     }
+
     return TRUE;
 }
