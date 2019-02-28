@@ -2,11 +2,12 @@
 
 namespace Netmosfera\OpalTests;
 
-use Netmosfera\Opal\Loader;
+use Netmosfera\Opal\Loaders\Loader;
 use Netmosfera\Opal\OpalBuilder;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
+use Netmosfera\Opal\Path;
 use PHPUnit\Framework\TestCase;
 
 class OpalBuilderTest extends TestCase
@@ -20,9 +21,9 @@ class OpalBuilderTest extends TestCase
         $preprocessors[spl_object_id($p2)] = $p2;
         $preprocessors[spl_object_id($p3)] = $p3;
 
-        $path1 = new PackagePath(new Package("A", "B"), "/path1");
-        $path2 = new PackagePath(new Package("C", "D"), "/path2");
-        $path3 = new PackagePath(new Package("E", "FD"), "/path3");
+        $path1 = new PackagePath(new Package("A", "B"), new Path("/path1"));
+        $path2 = new PackagePath(new Package("C", "D"), new Path("/path2"));
+        $path3 = new PackagePath(new Package("E", "FD"), new Path("/path3"));
         $paths = [$path1, $path2, $path3];
         /** @var PackagePath[] $paths */
 
@@ -32,7 +33,7 @@ class OpalBuilderTest extends TestCase
             public function start(
                 Array $directories,
                 Array $preprocessors,
-                String $compileDirectory,
+                Path $compileDirectory,
                 Int $compileDirectoryPermissions,
                 Int $compileFilePermissions
             ){
@@ -52,9 +53,10 @@ class OpalBuilderTest extends TestCase
             $builder->addPackage($path);
         }
 
-        $builder->start("/a", 0777, 0777);
+        $compileDirectory = new Path("/a");
+        $builder->start($compileDirectory, 0777, 0777);
 
-        $expect = [$indexedPaths, $preprocessors, "/a", 0777, 0777];
+        $expect = [$indexedPaths, $preprocessors, $compileDirectory, 0777, 0777];
         self::assertSame($expect, $loader->result);
     }
 }

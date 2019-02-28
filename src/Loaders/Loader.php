@@ -1,13 +1,15 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\Opal;
+namespace Netmosfera\Opal\Loaders;
+
+use Netmosfera\Opal\Path;
 
 interface Loader
 {
     public function start(
         Array $directories,
         Array $preprocessors,
-        String $compileDirectory,
+        Path $compileDirectory,
         Int $compileDirectoryPermissions,
         Int $compileFilePermissions
     );

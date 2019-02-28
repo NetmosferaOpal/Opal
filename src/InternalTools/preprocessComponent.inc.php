@@ -5,24 +5,22 @@ namespace Netmosfera\Opal\InternalTools;
 use Closure;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
+use Netmosfera\Opal\Path;
 use PhpParser\ParserFactory as PF;
 use PhpParser\PrettyPrinter\Standard;
 use function chmod;
-use function Netmosfera\Opal\Files\isNormalizedPath;
 use function umask;
 
 function preprocessComponent(
     PackagePath $packagePath,
     PackageComponent $packageComponent,
     Array $preprocessors,
-    String $compileDirectory,
+    Path $compileDirectory,
     Bool $executeIt,
     ?Int $directoryPermissions,
     ?Int $filePermissions
 ){
-    assert(isNormalizedPath($compileDirectory));
-
-    $originFile = $packagePath->path . $packageComponent->relativeToPackagePath;
+    $originFile = $packagePath->path->path . $packageComponent->relativeToPackagePath;
 
     $source = file_get_contents($originFile);
     if($preprocessors !== []){
@@ -34,7 +32,7 @@ function preprocessComponent(
         $source = (new Standard())->prettyPrintFile($nodes);
     }
 
-    $destinationFile = $compileDirectory . $packageComponent->absolutePath;
+    $destinationFile = $compileDirectory->path . $packageComponent->absolutePath;
 
     $saveUMask = umask(0);
 

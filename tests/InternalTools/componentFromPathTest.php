@@ -5,6 +5,7 @@ namespace Netmosfera\OpalTests\InternalTools;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
+use Netmosfera\Opal\Path;
 use PHPUnit\Framework\TestCase;
 use function Netmosfera\Opal\InternalTools\componentFromPath;
 
@@ -23,11 +24,13 @@ class componentFromPathTest extends TestCase
     }
 
     /** @dataProvider data2 */
-    public function test2(String $directory, String $file){
-        // test returns null if in-package identifiers are not valid php identifiers
+    public function test_is_null_if_invalid_identifiers(
+        String $packagePathString, String $componentPathString
+    ){
         $package = new Package("StarkIndustries", "IronManSuit");
-        $directory = new PackagePath($package, $directory);
-        self::assertSame(NULL, componentFromPath($directory, $file));
+        $packagePath = new PackagePath($package, new Path($packagePathString));
+        $packageComponent = componentFromPath($packagePath, new Path($componentPathString));
+        self::assertSame(NULL, $packageComponent);
     }
 
     public function data3(){
@@ -48,7 +51,7 @@ class componentFromPathTest extends TestCase
     public function test3(String $directory, String $file, PackageComponent $expected){
         // test that returns the PackageComponent object
         $package = new Package("StarkIndustries", "IronManSuit");
-        $directory = new PackagePath($package, $directory);
-        self::assertEquals($expected, componentFromPath($directory, $file));
+        $directory = new PackagePath($package, new Path($directory));
+        self::assertEquals($expected, componentFromPath($directory, new Path($file)));
     }
 }

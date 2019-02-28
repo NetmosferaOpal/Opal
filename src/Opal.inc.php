@@ -3,6 +3,8 @@
 namespace Netmosfera\Opal;
 
 use Error;
+use Netmosfera\Opal\Loaders\DynamicLoader;
+use Netmosfera\Opal\Loaders\StaticLoader;
 use function defined;
 
 function Opal(): OpalBuilder{

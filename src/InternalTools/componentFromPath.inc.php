@@ -4,7 +4,7 @@ namespace Netmosfera\Opal\InternalTools;
 
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
-use function Netmosfera\Opal\Files\isNormalizedPath;
+use Netmosfera\Opal\Path;
 
 /**
  * Creates a {@see PackageComponent} from a local file path.
@@ -16,11 +16,10 @@ use function Netmosfera\Opal\Files\isNormalizedPath;
  * {@see PackageComponent::$extension}. If all file-names in the path are valid PHP
  * identifiers a {@see PackageComponent} object is returned, otherwise `NULL`.
  */
-function componentFromPath(PackagePath $packagePath, String $path): ?PackageComponent{
-    assert(isPathInPackage($path, $packagePath));
-    assert(isNormalizedPath($path));
+function componentFromPath(PackagePath $packagePath, Path $path): ?PackageComponent{
+    assert($path->isIn($packagePath->path));
 
-    $relativePath = substr($path, $packagePath->pathLength);
+    $relativePath = substr($path->path, $packagePath->path->length);
 
     $identifiers = preg_split("@[\\\\/]+@", $relativePath);
     // Remove the first because the relative path starts with a

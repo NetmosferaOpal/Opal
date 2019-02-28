@@ -4,20 +4,18 @@ namespace Netmosfera\Opal\InternalTools;
 
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
+use Netmosfera\Opal\Path;
 use const DIRECTORY_SEPARATOR as DS;
-use function Netmosfera\Opal\Files\isNormalizedPath;
 use function Netmosfera\Opal\Files\readDirectory;
 
 function preprocessStaticComponents(
     Array $packagePaths,
     Array $preprocessors,
-    String $compileDirectory,
+    Path $compileDirectory,
     Bool $executeIt,
     ?Int $directoryPermissions,
     ?Int $filePermissions
 ){
-    assert(isNormalizedPath($compileDirectory));
-
     $components = [];
     /** @var PackageComponent[] $components */
 
@@ -45,7 +43,7 @@ function preprocessStaticComponents(
         $staticInclusionsSource .= "require __DIR__ . " . $fileString . ";\n";
     }
 
-    $destinationFile = $compileDirectory . DS . "static-inclusions.php";
+    $destinationFile = $compileDirectory->path . DS . "static-inclusions.php";
 
     file_put_contents($destinationFile, $staticInclusionsSource);
 

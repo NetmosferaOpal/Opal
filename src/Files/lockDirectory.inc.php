@@ -3,25 +3,24 @@
 namespace Netmosfera\Opal\Files;
 
 use Error;
+use Netmosfera\Opal\Path;
 use const DIRECTORY_SEPARATOR as DS;
 use function Netmosfera\Opal\Misc\retryWithinTimeLimit;
 use function umask;
 
 function lockDirectory(
-    String $directory,
+    Path $path,
     ?Int $directoryPermissions,
     Int $timeout = 30
 ){
-    assert(isNormalizedPath($directory));
-
     $directoryPermissions = $directoryPermissions ?? 0755;
 
-    $lockFilePath = $directory . DS . "opal.lock";
+    $lockFilePath = $path->path . DS . "opal.lock";
     $locked = retryWithinTimeLimit(function() use(
-        &$lock, &$lockFilePath, &$directory, &$directoryPermissions
+        &$lock, &$lockFilePath, &$path, &$directoryPermissions
     ){
         $saveUMask = umask(0);
-        @mkdir($directory, $directoryPermissions, TRUE);
+        @mkdir($path->path, $directoryPermissions, TRUE);
         $lock = @fopen($lockFilePath, "c");
         umask($saveUMask);
 
@@ -38,7 +37,7 @@ function lockDirectory(
 
     /** @var Resource $lock */
 
-    $actualContents = glob($directory . DS . "*");
+    $actualContents = glob($path->path . DS . "*");
     $isDirectoryNotEmpty = $actualContents !== [$lockFilePath];
     if($isDirectoryNotEmpty){
         fclose($lock);

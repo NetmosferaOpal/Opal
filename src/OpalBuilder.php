@@ -4,6 +4,7 @@ namespace Netmosfera\Opal;
 
 use Closure;
 use Error;
+use Netmosfera\Opal\Loaders\Loader;
 use function spl_object_id;
 
 class OpalBuilder
@@ -34,7 +35,7 @@ class OpalBuilder
     }
 
     public function start(
-        String $compileDirectory,
+        Path $compileDirectory,
         Int $compileDirectoryPermissions = 0755,
         Int $compileFilePermissions = 0644
     ){

@@ -1,9 +1,10 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\Opal;
+namespace Netmosfera\Opal\Loaders;
 
 use Closure;
 use Error;
+use Netmosfera\Opal\Path;
 use function Netmosfera\Opal\Files\emptyDirectory;
 use function Netmosfera\Opal\Files\lockDirectory;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
@@ -21,7 +22,7 @@ class DynamicLoader implements Loader
 
     /** @var Int */ private $_state;
 
-    /** @var String|NULL */ private $_compileDirectory;
+    /** @var Path|NULL */ private $_compileDirectory;
 
     /** @var Closure|NULL */ private $_autoloader;
 
@@ -37,7 +38,7 @@ class DynamicLoader implements Loader
     public function start(
         Array $directories,
         Array $preprocessors,
-        String $compileDirectory,
+        Path $compileDirectory,
         Int $compileDirectoryPermissions,
         Int $compileFilePermissions
     ){

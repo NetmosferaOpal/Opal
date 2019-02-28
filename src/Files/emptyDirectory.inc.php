@@ -2,15 +2,15 @@
 
 namespace Netmosfera\Opal\Files;
 
+use Netmosfera\Opal\Path;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
-function emptyDirectory(String $path): void{
-    assert(isNormalizedPath($path));
+function emptyDirectory(Path $path): void{
 
     $flags = RecursiveDirectoryIterator::SKIP_DOTS;
-    $directoryIterator = new RecursiveDirectoryIterator($path, $flags);
+    $directoryIterator = new RecursiveDirectoryIterator($path->path, $flags);
 
     $flags = RecursiveIteratorIterator::CHILD_FIRST;
     $flatDirectoryIterator = new RecursiveIteratorIterator($directoryIterator, $flags);
