@@ -1,7 +1,8 @@
 <?php declare(strict_types = 1);
 
 namespace Netmosfera\Opal;
-use function Netmosfera\Opal\InternalTools\isNormalizedPath;
+
+use function Netmosfera\Opal\Files\isNormalizedPath;
 
 /**
  * Local directory in which a {@see Package} can be found.

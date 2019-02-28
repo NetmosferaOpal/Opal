@@ -8,6 +8,7 @@ use Netmosfera\Opal\PackagePath;
 use PhpParser\ParserFactory as PF;
 use PhpParser\PrettyPrinter\Standard;
 use function chmod;
+use function Netmosfera\Opal\Files\isNormalizedPath;
 use function umask;
 
 function preprocessComponent(

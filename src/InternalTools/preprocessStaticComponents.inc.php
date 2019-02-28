@@ -5,6 +5,8 @@ namespace Netmosfera\Opal\InternalTools;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
 use const DIRECTORY_SEPARATOR as DS;
+use function Netmosfera\Opal\Files\isNormalizedPath;
+use function Netmosfera\Opal\Files\readDirectory;
 
 function preprocessStaticComponents(
     Array $packagePaths,

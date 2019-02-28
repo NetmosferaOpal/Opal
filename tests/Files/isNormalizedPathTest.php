@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\InternalTools;
+namespace Netmosfera\OpalTests\Files;
 
 use PHPUnit\Framework\TestCase;
-use function Netmosfera\Opal\InternalTools\isNormalizedPath;
+use function Netmosfera\Opal\Files\isNormalizedPath;
 
 class isNormalizedPathTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\Opal\InternalTools;
+namespace Netmosfera\Opal\Misc;
 
 use Closure;
 

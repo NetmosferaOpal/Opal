@@ -1,6 +1,7 @@
 <?php declare(strict_types = 1);
 
 namespace Netmosfera\Opal;
+
 use function Netmosfera\Opal\InternalTools\isValidIdentifier;
 
 /**
@@ -9,7 +10,9 @@ use function Netmosfera\Opal\InternalTools\isValidIdentifier;
 class Package
 {
     /** @var String */ public $vendorIdentifier;
+
     /** @var String */ public $packageIdentifier;
+
     /** @var String */ public $id;
 
     public function __construct(String $vendorIdentifier, String $packageIdentifier){

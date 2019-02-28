@@ -4,9 +4,9 @@ namespace Netmosfera\Opal;
 
 use Closure;
 use Error;
+use function Netmosfera\Opal\Files\emptyDirectory;
+use function Netmosfera\Opal\Files\lockDirectory;
 use function Netmosfera\Opal\InternalTools\componentFromTypeName;
-use function Netmosfera\Opal\InternalTools\emptyDirectory;
-use function Netmosfera\Opal\InternalTools\lockDirectory;
 use function Netmosfera\Opal\InternalTools\preprocessComponent;
 use function Netmosfera\Opal\InternalTools\preprocessStaticComponents;
 use function spl_autoload_register;

@@ -1,11 +1,11 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\OpalTests\InternalTools;
+namespace Netmosfera\OpalTests\Files;
 
 use PHPUnit\Framework\TestCase;
 use const DIRECTORY_SEPARATOR as DS;
 use const SORT_STRING;
-use function Netmosfera\Opal\InternalTools\readDirectory;
+use function Netmosfera\Opal\Files\readDirectory;
 use function random_bytes;
 use function rmdir;
 

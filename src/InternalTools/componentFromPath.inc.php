@@ -4,6 +4,7 @@ namespace Netmosfera\Opal\InternalTools;
 
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
+use function Netmosfera\Opal\Files\isNormalizedPath;
 
 /**
  * Creates a {@see PackageComponent} from a local file path.

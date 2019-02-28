@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\Opal\InternalTools;
+namespace Netmosfera\Opal\Files;
 
 /**
  * Returns `TRUE` if the given path is an absolute normalized path.

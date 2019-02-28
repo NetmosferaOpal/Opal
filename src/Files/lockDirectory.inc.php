@@ -1,13 +1,11 @@
 <?php declare(strict_types = 1);
 
-namespace Netmosfera\Opal\InternalTools;
+namespace Netmosfera\Opal\Files;
 
+use Error;
 use const DIRECTORY_SEPARATOR as DS;
+use function Netmosfera\Opal\Misc\retryWithinTimeLimit;
 use function umask;
-
-class LockTimeout{}
-
-class NonEmptyDirectory{}
 
 function lockDirectory(
     String $directory,
@@ -35,7 +33,7 @@ function lockDirectory(
     }, (Float)$timeout, 0.0);
 
     if(!$locked){
-        return new LockTimeout();
+        throw new Error("Timeout");
     }
 
     /** @var Resource $lock */
@@ -44,7 +42,7 @@ function lockDirectory(
     $isDirectoryNotEmpty = $actualContents !== [$lockFilePath];
     if($isDirectoryNotEmpty){
         fclose($lock);
-        return new NonEmptyDirectory();
+        throw new Error("Directory is not empty");
     }
 
     return $lock;

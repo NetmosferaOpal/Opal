@@ -22,17 +22,13 @@ class OpalBuilder
 
     public function addPackage(PackagePath $packagePath){
         assert(!$this->_started, new Error("Cannot modify Opal after it is started"));
-
         $key = $packagePath->package->id;
-
         assert(!isset($this->_paths[$key]), new Error("This package exists already"));
-
         $this->_paths[$key] = $packagePath;
     }
 
     public function addPreprocessor(Closure $preprocessor){
         assert(!$this->_started, new Error("Cannot modify Opal after it is started"));
-
         $identifier = spl_object_id($preprocessor);
         $this->_preprocessors[$identifier] = $preprocessor;
     }
