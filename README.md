@@ -1,9 +1,9 @@
-[release]: https://img.shields.io/github/release/PHPOpal/Opal.svg
-[release-URL]: https://github.com/PHPOpal/Opal/releases
-[status]: https://travis-ci.org/PHPOpal/Opal.svg?branch=master
-[status-URL]: https://travis-ci.org/PHPOpal/Opal
-[coverage]: https://coveralls.io/repos/github/PHPOpal/Opal/badge.svg?branch=master
-[coverage-URL]: https://coveralls.io/github/PHPOpal/Opal?branch=master
+[release]: https://img.shields.io/github/release/NetmosferaOpal/Opal.svg
+[release-URL]: https://github.com/NetmosferaOpal/Opal/releases
+[status]: https://travis-ci.org/NetmosferaOpal/Opal.svg?branch=master
+[status-URL]: https://travis-ci.org/NetmosferaOpal/Opal
+[coverage]: https://coveralls.io/repos/github/NetmosferaOpal/Opal/badge.svg?branch=master
+[coverage-URL]: https://coveralls.io/github/NetmosferaOpal/Opal?branch=master
 
 # Opal
 
@@ -57,7 +57,7 @@ request. This mode reads the original files from the provided directories, prepr
 them into new files in the cache directory, and finally includes them in PHP.
 
 If you just want to see this in action without following these steps, you may try cloning
-the [setup demo repository](https://github.com/PHPOpal/SetupDemo). 
+the [setup demo repository](https://github.com/NetmosferaOpal/SetupDemo). 
 
 1. Create a standard PHP _Composer_ project;<br>
    leave `{"autoload": {}}` and `{"autoload-dev": {}}` empty for now.
