@@ -2,6 +2,7 @@
 
 namespace Netmosfera\OpalTests\Loaders;
 
+use Netmosfera\Opal\Identifier;
 use Netmosfera\Opal\Path;
 use Netmosfera\Opal\Loaders\StaticLoader;
 use Netmosfera\Opal\Package;
@@ -14,8 +15,8 @@ class StaticLoaderTest extends TestCase
 {
     public function test(){
         try{
-            $V = "V" . bin2hex(random_bytes(5));
-            $P = "P" . bin2hex(random_bytes(5));
+            $V = new Identifier("V" . bin2hex(random_bytes(5)));
+            $P = new Identifier("P" . bin2hex(random_bytes(5)));
 
             $NS = "namespace $V\\$P;";
             $originPath = new Path("/origin-irrelevant");

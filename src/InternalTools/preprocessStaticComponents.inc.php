@@ -43,7 +43,7 @@ function preprocessStaticComponents(
         $staticInclusionsSource .= "require __DIR__ . " . $fileString . ";\n";
     }
 
-    $destinationFile = $compileDirectory->path . DS . "static-inclusions.php";
+    $destinationFile = $compileDirectory->string . DS . "static-inclusions.php";
 
     file_put_contents($destinationFile, $staticInclusionsSource);
 

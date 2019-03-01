@@ -2,6 +2,9 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
+use Netmosfera\Opal\Identifier;
+use Netmosfera\Opal\IdentifierException;
+use Netmosfera\Opal\Component;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
 use Netmosfera\Opal\Path;
@@ -19,30 +22,35 @@ use Netmosfera\Opal\Path;
 function componentFromPath(PackagePath $packagePath, Path $path): ?PackageComponent{
     assert($path->isIn($packagePath->path));
 
-    $relativePath = substr($path->path, $packagePath->path->length);
+    $relativePath = substr($path->string, $packagePath->path->length);
 
-    $identifiers = preg_split("@[\\\\/]+@", $relativePath);
+    $pathPieces = preg_split("@[\\\\/]+@", $relativePath);
     // Remove the first because the relative path starts with a
     // directory separator, therefore the first is empty
-    $firstPathPiece = array_shift($identifiers);
+    $firstPathPiece = array_shift($pathPieces);
     assert($firstPathPiece === "");
 
-    $fileName = $identifiers[count($identifiers) - 1];
+    $fileName = $pathPieces[count($pathPieces) - 1];
     $fileNamePieces = explode(".", $fileName, 2);
 
     $componentIdentifier = $fileNamePieces[0];
     $extensions = $fileNamePieces[1] ?? NULL;
     $extensions = $extensions === NULL ? "" : "." . $extensions;
 
-    $identifiers[count($identifiers) - 1] = $componentIdentifier;
+    $pathPieces[count($pathPieces) - 1] = $componentIdentifier;
 
-    foreach($identifiers as $identifier){
-        if(isValidIdentifier($identifier) === FALSE){
+    $identifiers = [];
+    foreach($pathPieces as $pathPiece){
+        try{
+            $identifiers[] = new Identifier($pathPiece);
+        }catch(IdentifierException $e){
             // Possibly a valid file but since it contains pieces that won't make
             // valid PHP identifiers, we can only ignore it.
             return NULL;
         }
     }
 
-    return new PackageComponent($packagePath->package, $identifiers, $extensions);
+    return new PackageComponent(
+        $packagePath->package, new Component($identifiers), $extensions
+    );
 }

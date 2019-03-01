@@ -20,7 +20,7 @@ function preprocessComponent(
     ?Int $directoryPermissions,
     ?Int $filePermissions
 ){
-    $originFile = $packagePath->path->path . $packageComponent->relativeToPackagePath;
+    $originFile = $packagePath->path->string . $packageComponent->relativeToPackagePath;
 
     $source = file_get_contents($originFile);
     if($preprocessors !== []){
@@ -32,7 +32,7 @@ function preprocessComponent(
         $source = (new Standard())->prettyPrintFile($nodes);
     }
 
-    $destinationFile = $compileDirectory->path . $packageComponent->absolutePath;
+    $destinationFile = $compileDirectory->string . $packageComponent->absolutePath;
 
     $saveUMask = umask(0);
 

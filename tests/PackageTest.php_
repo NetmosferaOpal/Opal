@@ -1,8 +1,0 @@
-<?php declare(strict_types = 1);
-
-namespace Netmosfera\OpalTests;
-
-use PHPUnit\Framework\TestCase;
-
-class PackageTest extends TestCase
-{}

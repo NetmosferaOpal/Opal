@@ -2,6 +2,7 @@
 
 namespace Netmosfera\OpalTests;
 
+use Netmosfera\Opal\Identifier;
 use Netmosfera\Opal\Loaders\Loader;
 use Netmosfera\Opal\OpalBuilder;
 use Netmosfera\Opal\Package;
@@ -21,9 +22,11 @@ class OpalBuilderTest extends TestCase
         $preprocessors[spl_object_id($p2)] = $p2;
         $preprocessors[spl_object_id($p3)] = $p3;
 
-        $path1 = new PackagePath(new Package("A", "B"), new Path("/path1"));
-        $path2 = new PackagePath(new Package("C", "D"), new Path("/path2"));
-        $path3 = new PackagePath(new Package("E", "FD"), new Path("/path3"));
+        $i = function(String $identifier){ return new Identifier($identifier); };
+
+        $path1 = new PackagePath(new Package($i("A"), $i("B")), new Path("/path1"));
+        $path2 = new PackagePath(new Package($i("C"), $i("D")), new Path("/path2"));
+        $path3 = new PackagePath(new Package($i("E"), $i("F")), new Path("/path3"));
         $paths = [$path1, $path2, $path3];
         /** @var PackagePath[] $paths */
 

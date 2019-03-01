@@ -2,6 +2,8 @@
 
 namespace Netmosfera\OpalTests;
 
+use Netmosfera\Opal\Component;
+use Netmosfera\Opal\Identifier;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PerPackagePreprocessorManager;
@@ -25,21 +27,23 @@ class PerPackagePreprocessorManagerTest extends TestCase
         };
 
         $manager = new PerPackagePreprocessorManager($preprocessor);
-        $manager->enablePreprocessorForPackage(new Package("A", "B"), 42);
+        $supportedPackage = new Package(new Identifier("A"), new Identifier("B"));
+        $manager->enablePreprocessorForPackage($supportedPackage, 42);
         $filteringPreprocessor = $manager->filteringPreprocessor();
 
-        $nodes = [new Echo_([new LNumber(123)])];
+        $originalNodes = [new Echo_([new LNumber(123)])];
 
-        $package = new Package("A", "B");
-        $component = new PackageComponent($package, ["C"], ".php");
-        $actualNodes = $filteringPreprocessor($component, $nodes);
-        $expectNodes = array_merge($nodes, [$addNode]);
+        $package = new Package(new Identifier("A"), new Identifier("B"));
+        $componentName = new Component([new Identifier("C")]);
+        $component = new PackageComponent($package, $componentName, ".php");
+        $expectNodes = array_merge($originalNodes, [$addNode]);
+        $actualNodes = $filteringPreprocessor($component, $originalNodes);
         self::assertSame($expectNodes, $actualNodes);
 
-        $nodes = [new Echo_([new LNumber(123)])];
-        $package = new Package("XXX", "XXX");
-        $component = new PackageComponent($package, ["C"], ".php");
-        $actualNodes = $filteringPreprocessor($component, $nodes);
-        self::assertSame($nodes, $actualNodes);
+        $package = new Package(new Identifier("C"), new Identifier("D"));
+        $componentName = new Component([new Identifier("C")]);
+        $component = new PackageComponent($package, $componentName, ".php");
+        $actualNodes = $filteringPreprocessor($component, $originalNodes);
+        self::assertSame($originalNodes, $actualNodes);
     }
 }

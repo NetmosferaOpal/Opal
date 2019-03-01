@@ -2,8 +2,6 @@
 
 namespace Netmosfera\Opal;
 
-use function Netmosfera\Opal\InternalTools\isValidIdentifiers;
-
 /**
  * Component in a PHP Package.
  *
@@ -21,7 +19,7 @@ class PackageComponent
 {
     /** @var Package */ public $package;
 
-    /** @var String[] */ public $identifiers;
+    /** @var Component */ public $name;
 
     /**
      * The extension of the file; this is usually ".php". For example files that cannot be
@@ -46,22 +44,17 @@ class PackageComponent
 
     public function __construct(
         Package $package,
-        array $identifiers,
+        Component $name,
         String $extensions = ".php"
     ){
-        // Intentionally checked with assert(); this way the overhead
-        // is reduced to the bare minimum in production.
-        assert(isValidIdentifiers($identifiers));
         assert($extensions === "" || substr($extensions, 0, 1) === ".");
 
         $this->package = $package;
-        $this->identifiers = $identifiers;
+        $this->name = $name;
         $this->extensions = $extensions;
 
-        $stringifiedIdentifiers = "/" . implode("/", $identifiers);
-        $this->relativeToPackagePath = $stringifiedIdentifiers . $extensions;
-
-        $prefix = "/" . $package->vendorIdentifier . "/" . $package->packageIdentifier;
-        $this->absolutePath = $prefix . $this->relativeToPackagePath;
+        $this->relativeToPackagePath .= $name->path() . $extensions;
+        $this->absolutePath = "/" . $package->vendor . "/" . $package->name;
+        $this->absolutePath .= $this->relativeToPackagePath;
     }
 }

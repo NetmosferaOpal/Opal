@@ -2,6 +2,7 @@
 
 namespace Netmosfera\OpalTests\Loaders;
 
+use Netmosfera\Opal\Identifier;
 use Netmosfera\Opal\Loaders\DynamicLoader;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
@@ -17,8 +18,8 @@ class DynamicLoaderTest extends TestCase
 {
     public function test(){
         try{
-            $V = "V" . bin2hex(random_bytes(5));
-            $P = "P" . bin2hex(random_bytes(5));
+            $V = new Identifier("V" . bin2hex(random_bytes(5)));
+            $P = new Identifier("P" . bin2hex(random_bytes(5)));
 
             $NS = "namespace $V\\$P;";
             $originPath = new Path(__DIR__ . "/origin");

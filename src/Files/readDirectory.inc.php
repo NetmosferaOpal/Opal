@@ -9,7 +9,7 @@ use SplFileInfo;
 
 function readDirectory(Path $path): array{
     $flags = RecursiveDirectoryIterator::SKIP_DOTS;
-    $directoryIterator = new RecursiveDirectoryIterator($path->path, $flags);
+    $directoryIterator = new RecursiveDirectoryIterator($path->string, $flags);
 
     $flattenedDirectoryIterator = new RecursiveIteratorIterator($directoryIterator);
 

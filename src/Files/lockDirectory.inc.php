@@ -15,12 +15,12 @@ function lockDirectory(
 ){
     $directoryPermissions = $directoryPermissions ?? 0755;
 
-    $lockFilePath = $path->path . DS . "opal.lock";
+    $lockFilePath = $path->string . DS . "opal.lock";
     $locked = retryWithinTimeLimit(function() use(
         &$lock, &$lockFilePath, &$path, &$directoryPermissions
     ){
         $saveUMask = umask(0);
-        @mkdir($path->path, $directoryPermissions, TRUE);
+        @mkdir($path->string, $directoryPermissions, TRUE);
         $lock = @fopen($lockFilePath, "c");
         umask($saveUMask);
 
@@ -37,7 +37,7 @@ function lockDirectory(
 
     /** @var Resource $lock */
 
-    $actualContents = glob($path->path . DS . "*");
+    $actualContents = glob($path->string . DS . "*");
     $isDirectoryNotEmpty = $actualContents !== [$lockFilePath];
     if($isDirectoryNotEmpty){
         fclose($lock);

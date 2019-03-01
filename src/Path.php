@@ -2,32 +2,35 @@
 
 namespace Netmosfera\Opal;
 
-use Error;
 use function strlen;
 
+/**
+ * A path name in the local filesystem.
+ */
 class Path
 {
-    /** @var String */ public $path;
+    /** @var String */ public $string;
 
     /** @var Int */ public $length;
 
     public function __construct(String $path){
         if(preg_match('@^   ([a-zA-Z]:)?   (?:[/\\\\][^/\\\\]+)*   $@xsD', $path) !== 1){
-            throw new Error();
+            throw new PathException();
         }
 
-        $this->path = $path;
+        $this->string = $path;
         $this->length = strlen($path);
     }
 
     public function isIn(Path $path): Bool{
         $length = $path->length;
+        $separator = $this->string[$length] ?? NULL;
         return
-            substr($this->path, 0, $length) === $path->path &&
-            ($this->path[$length] === "/" || $this->path[$length] === "\\");  // @TODO is or is in()
+            ($separator === "/" || $separator === "\\") &&
+            substr($this->string, 0, $length) === $path->string;
     }
 
     public function __toString(): String{
-        return $this->path;
+        return $this->string;
     }
 }

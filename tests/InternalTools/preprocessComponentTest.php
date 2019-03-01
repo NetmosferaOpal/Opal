@@ -2,6 +2,9 @@
 
 namespace Netmosfera\OpalTests\InternalTools;
 
+use Netmosfera\Opal\Component;
+use Netmosfera\Opal\Identifier;
+use function Netmosfera\Opal\InternalTools\componentFromTypeName;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 use Netmosfera\Opal\PackagePath;
@@ -23,12 +26,12 @@ class preprocessComponentTest extends TestCase
     /** @dataProvider data */
     public function test(Bool $executeIt){
         try{
-            $p = new Package("StarkIndustries", "HulkBuster");
+            $p = new Package(new Identifier("A"), new Identifier("B"));
             $d = new PackagePath($p, new Path(__DIR__ . "/origin"));
-            $c = new PackageComponent($p, ["Foo", "Bar", "Baz"], ".php");
+            $c = componentFromTypeName("A\\B\\C\\D\\E");
             $compileDirectoryPath = new Path(__DIR__ . "/destination");
-            $originPath = $d->path->path . $c->relativeToPackagePath;
-            $destinationPath = $compileDirectoryPath->path . $c->absolutePath;
+            $originPath = $d->path->string . $c->relativeToPackagePath;
+            $destinationPath = $compileDirectoryPath->string . $c->absolutePath;
 
             mkdir(dirname($originPath), 0777, TRUE);
             file_put_contents($originPath, "<?php echo 123;");

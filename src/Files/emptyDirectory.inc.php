@@ -10,7 +10,7 @@ use SplFileInfo;
 function emptyDirectory(Path $path): void{
 
     $flags = RecursiveDirectoryIterator::SKIP_DOTS;
-    $directoryIterator = new RecursiveDirectoryIterator($path->path, $flags);
+    $directoryIterator = new RecursiveDirectoryIterator($path->string, $flags);
 
     $flags = RecursiveIteratorIterator::CHILD_FIRST;
     $flatDirectoryIterator = new RecursiveIteratorIterator($directoryIterator, $flags);

@@ -2,6 +2,8 @@
 
 namespace Netmosfera\Opal\InternalTools;
 
+use Netmosfera\Opal\Component;
+use Netmosfera\Opal\Identifier;
 use Netmosfera\Opal\Package;
 use Netmosfera\Opal\PackageComponent;
 
@@ -13,16 +15,21 @@ use Netmosfera\Opal\PackageComponent;
  * in the format `VendorName\PackageName\*`.
  */
 function componentFromTypeName(String $typeName): ?PackageComponent{
-    $identifiers = explode("\\", $typeName);
+    $pieces = explode("\\", $typeName);
 
-    if(isset($identifiers[2]) === FALSE){
+    if(isset($pieces[2]) === FALSE){
         return NULL;
     }
 
-    $vendorIdentifier = array_shift($identifiers);
-    $packageIdentifier = array_shift($identifiers);
+    $vendorIdentifier = new Identifier($pieces[0]);
+    $packageIdentifier = new Identifier($pieces[1]);
+
+    $identifiers = [];
+    for($max = count($pieces), $offset = 2; $offset < $max; $offset++){
+        $identifiers[] = new Identifier($pieces[$offset]);
+    }
 
     $package = new Package($vendorIdentifier, $packageIdentifier);
 
-    return new PackageComponent($package, $identifiers, ".php");
+    return new PackageComponent($package, new Component($identifiers), ".php");
 }

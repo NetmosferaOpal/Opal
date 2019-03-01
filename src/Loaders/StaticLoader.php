@@ -43,13 +43,13 @@ class StaticLoader implements Loader
 
             (static function($__OPAL_FILE__){
                 require $__OPAL_FILE__;
-            })($compileDirectory->path . $component->absolutePath);
+            })($compileDirectory->string . $component->absolutePath);
         };
 
         spl_autoload_register($this->_autoloader, TRUE, FALSE);
 
         (static function($__OPAL_FILE__){
             require $__OPAL_FILE__;
-        })($compileDirectory->path . DS . "static-inclusions.php");
+        })($compileDirectory->string . DS . "static-inclusions.php");
     }
 }

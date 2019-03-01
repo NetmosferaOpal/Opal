@@ -61,7 +61,7 @@ class readDirectoryTest extends TestCase
             $actualFiles = readDirectory(new Path($bd));
             foreach($actualFiles as $actualFile){
                 assert($actualFile instanceof Path);
-                $actualPaths[] = $actualFile->path;
+                $actualPaths[] = $actualFile->string;
             }
 
             sort($files, SORT_STRING);
